@@ -29,9 +29,13 @@ Image updating the value which we would like to convert.<br />
 
 ![](images/multi_select.gif)
 
+Image showcasing the multi-select functionality and navigating to the currency history page. <br />
+
+![](images/update_table_single.jpg)
+
 Image showcasing a single currency and it's price history.<br />
 
-![](images/update_table_multiple.jpg)
+![](images/update_table_single.jpg)![](images/update_table_multiple.jpg)
 
 Image showcasing multiple currencies and their price history. <br />
 
@@ -39,9 +43,6 @@ Image showcasing multiple currencies and their price history. <br />
 
 Image showcasing the application home screen. <br />
 
-![](images/update_table_single.jpg)
-
-mage showcasing the multi-select functionality and navigating to the currency history page. <br />
 
 <br />
 <br />
