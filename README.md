@@ -50,9 +50,9 @@ Image showcasing the application home screen. <br />
 <br />
 <br />
 
-I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date<br />
+I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date:<br />
 
-- Implement a Retrofit Mock Server for UI tests
+- Implement a Retrofit Mock Server for UI tests.
 - Finish integrating all of my mock test cases.<br />
 
 And that is all folks! Thank you for stopping by.
