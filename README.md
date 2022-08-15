@@ -39,10 +39,6 @@ Image showcasing a single currency and it's price history.<br />
 
 Image showcasing multiple currencies and their price history. <br />
 
-![](images/home_screen.jpg)
-
-Image showcasing the application home screen. <br />
-
 
 <br />
 <br />
