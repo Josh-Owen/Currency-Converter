@@ -25,35 +25,35 @@ Here is a showcase of some of the applications features:
 
 ![](images/updating_amount_to_convert.gif)
 
-Image updating the value which we would like to convert.\
+Image updating the value which we would like to convert.<br />
 
 ![](images/multi_select.gif)
 
-Image showcasing the multi-select functionality and navigating to the currency history page. \
+Image showcasing the multi-select functionality and navigating to the currency history page. <br />
 
 ![](images/multi_select.jpg)
 
-Image showcasing the multi-select RecyclerView functionality.\
+Image showcasing the multi-select RecyclerView functionality.<br />
 
 ![](images/update_table_multiple.jpg)
 
-Image showcasing multiple currencies and their price history. \ 
+Image showcasing multiple currencies and their price history. <br /> 
 
 ![](images/update_table_single.jpg)
 
-Image showcasing single currency and it's price history.\
+Image showcasing single currency and it's price history.<br />
 
 ![](images/home_screen.jpg)
 
-Image showcasing the application home screen. \
+Image showcasing the application home screen. <br />
 
 <br />
 <br />
 
-I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date\
+I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date<br />
 
 - Implement a Retrofit Mock Server for UI tests
-- Finish integrating all of my mock test cases.\
+- Finish integrating all of my mock test cases.<br />
 
 And that is all folks! Thank you for stopping by.
 
