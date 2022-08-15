@@ -2,7 +2,6 @@ package com.joshowen.forexexchangerates.ui.currencylist
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -12,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
@@ -125,10 +125,10 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                     if (it is CurrencyListPageState.Success) {
                         currencyAdapter.submitList(it.data)
                     } else if (it is CurrencyListPageState.Error) {
-                        Toast.makeText(
-                            requireContext(),
+                        Snackbar.make(
+                           binding.root,
                             getString(R.string.generic_network_error),
-                            Toast.LENGTH_LONG
+                            Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }

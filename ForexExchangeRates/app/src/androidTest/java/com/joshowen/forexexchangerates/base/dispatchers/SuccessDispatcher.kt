@@ -3,7 +3,7 @@ package com.joshowen.forexexchangerates.base.dispatchers
 import android.content.Context
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
-import com.joshowen.forexexchangerates.base.FileReader
+import com.joshowen.forexexchangerates.base.utils.FileReader
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest

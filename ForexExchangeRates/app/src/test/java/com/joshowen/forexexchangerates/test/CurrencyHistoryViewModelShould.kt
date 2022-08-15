@@ -1,8 +1,6 @@
 package com.joshowen.forexexchangerates.test
 
-import androidx.lifecycle.asFlow
 import com.joshowen.forexexchangerates.base.BaseUnitTest
-import com.joshowen.forexexchangerates.ext.captureValues
 import com.joshowen.forexexchangerates.ext.getValueForTest
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
@@ -13,7 +11,6 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -48,7 +45,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun showSpinnerWhilstLoading() = runTest {
+    fun doesShowSpinnerWhilstLoading() = runTest {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.setSupportedCurrencies(listOf(CurrencyType.JAPANESE_YEN))
@@ -59,7 +56,13 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun showsCorrectUserInputCurrencyFormat() = runTest {
+    fun doesHideSpinnerAfterLoading() = runTest {
+
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun displaysCorrectUserInputCurrencyFormat() = runTest {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         val output = viewModel.outputs.fetchSpecifiedCurrencyAmount().getValueForTest()
@@ -68,28 +71,13 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun hidesSpinnerAfterCurrencyHistoryHasBeenProcessed() = runTest {
-        val viewModel = mockSuccessfulCase()
-        viewModel.inputs.setSpecifiedCurrencyAmount("100")
-        viewModel.inputs.setSupportedCurrencies(listOf(CurrencyType.JAPANESE_YEN))
-        viewModel.fetchPriceHistory()
+    fun doesFetchCurrencyInformationForIntendedCurrencies() = runTest {
 
-        viewModel.outputs.fetchUiState().asFlow().collectLatest {
-            assertEquals(true, it)
-        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun isGenericNetworkErrorPropagatedFromRepository() = runTest {
-        val viewModel = mockErrorCase()
-        viewModel.inputs.setSpecifiedCurrencyAmount("100")
-        viewModel.inputs.setSupportedCurrencies(listOf(CurrencyType.JAPANESE_YEN))
-        viewModel.fetchPriceHistory()
-
-        viewModel.outputs.fetchUiState().captureValues {
-            assertEquals(true, values.last())
-        }
 
     }
 
@@ -109,7 +97,5 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         })
         return CurrencyHistoryFragmentVM(repository)
     }
-
     //endregion
-
 }

@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.base.ui
+package com.joshowen.forexexchangerates.base.tests.ui
 
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.base.BaseUITest
+import com.joshowen.forexexchangerates.base.utils.nthChildOf
 import org.hamcrest.CoreMatchers
 import org.junit.Test
 

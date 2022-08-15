@@ -2,13 +2,13 @@ package com.joshowen.forexexchangerates.ui.currencyhistory
 
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyHistoryBinding
@@ -64,10 +64,10 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                             currencyHistoryAdapter.submitList(it.data)
                         }
                         is CurrencyHistoryPageState.Error -> {
-                            Toast.makeText(
-                                requireContext(),
+                            Snackbar.make(
+                                binding.root,
                                 getString(R.string.generic_network_error),
-                                Toast.LENGTH_LONG
+                                Snackbar.LENGTH_LONG
                             ).show()
                         }
                         else -> {

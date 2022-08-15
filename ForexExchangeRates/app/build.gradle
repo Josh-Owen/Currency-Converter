@@ -23,9 +23,8 @@ android {
 
         buildConfigField("String", "EXCHANGE_RATE_API_KEY", gradleProperties['EXCHANGE_RATE_API_KEY'])
 
-//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-            testInstrumentationRunner 'com.joshowen.forexexchangerates.base.MockTestRunner'
+        testInstrumentationRunner 'com.joshowen.forexexchangerates.base.MockTestRunner'
     }
 
     buildTypes {

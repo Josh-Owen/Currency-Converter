@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.base
+package com.joshowen.forexexchangerates.base.idleresources
 
 import android.view.View
 import androidx.test.espresso.IdlingResource
