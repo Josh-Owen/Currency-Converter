@@ -33,7 +33,7 @@ Image showcasing the multi-select functionality and navigating to the currency h
 
 ![](images/update_table_single.jpg)
 
-Image showcasing single currency and it's price history.<br />
+Image showcasing a single currency and it's price history.<br />
 
 ![](images/update_table_multiple.jpg)
 
