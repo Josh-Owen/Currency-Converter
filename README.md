@@ -39,7 +39,7 @@ Image showcasing the multi-select RecyclerView functionality.
 
 Image showcasing multiple currencies and their price history.  
 
-![](images/update_table_multiple.jpg)
+![](images/update_table_single.jpg)
 
 Image showcasing single currency and it's price history.
 
