@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">ForexExchangeRates</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Errors -->
+    <string name="generic_network_error">Oops! Something went wrong, do you have an active network connection?</string>
+
+    <!-- List Of Currencies Strings -->
+    <string name="list_of_currencies_page_title">FX Exchange Rates</string>
+    <string name="list_of_currencies_selected_amount_format">%s/%s Selected</string>
+    <string name="list_of_currencies_convert_multiple">Convert multiple Currencies</string>
+    <!-- End of List Of Currencies Strings -->
+
+
+    <!-- Currency History Strings -->
+    <string name="currency_history_page_title">Historic Prices</string>
+    <string name="currency_history_table_date_title">Date</string>
+    <!-- End of Currency History Strings-->
+
+
+    <!-- Currency Symbols -->
+    <string name="currency_codes_gbp">GBP</string>
+    <string name="currency_codes_eur">EUR</string>
+    <string name="currency_codes_usd">USD</string>
+    <string name="currency_codes_jpy">JPY</string>
+    <string name="currency_codes_aud">AUD</string>
+    <string name="currency_codes_cad">CAD</string>
+    <string name="currency_codes_chf">CHF</string>
+    <string name="currency_codes_cny">CNY</string>
+    <string name="currency_codes_sek">SEK</string>
+    <string name="currency_codes_nzd">NZD</string>
+
+
+
+</resources>

@@ -1,0 +1,27 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if( requested.id.id == 'com.google.dagger-hilt-android-gradle-plugin') {
+                useModule("com.google.dagger:hilt-android-gradle-plugin:2.42")
+            }
+            else if(requested.id.id == "androidx.navigation-navigation-safe-args-gradle-plugin") {
+                useModule("androidx.navigation:navigation-safe-args-gradle-plugin:2.4.2")
+            }
+        }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "ForexExchangeRates"
+include ':app'
+include ':repository'

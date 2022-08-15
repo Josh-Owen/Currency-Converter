@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/currencyListFragment">
+
+    <fragment
+        android:id="@+id/currencyListFragment"
+        android:name="com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragment"
+        android:label="@string/list_of_currencies_page_title" >
+        <action
+            android:id="@+id/action_currencyListFragment_to_currencyHistoryFragment"
+            app:destination="@id/currencyHistoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/currencyHistoryFragment"
+        android:name="com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragment"
+        android:label="@string/currency_history_page_title" >
+
+
+        <argument
+            android:name="specifiedAmountOfCurrency"
+            app:argType="string"
+            app:nullable="false"/>
+        <argument
+            android:name="selectedCurrencies"
+            app:argType="com.joshowen.repository.enums.CurrencyType[]" />
+    </fragment>
+</navigation>
