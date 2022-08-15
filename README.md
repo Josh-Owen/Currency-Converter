@@ -21,7 +21,7 @@ Technologies used for the task:
 Here is a showcase of some of the applications features: 
 
 ### Showcase
-
+§
 
 ![](images/updating_amount_to_convert.gif)
 Image updating the value which we would like to convert.
@@ -29,13 +29,13 @@ Image updating the value which we would like to convert.
 ![](images/multi_select.jpg)!
 Image showcasing the multi-select RecyclerView functionality.
 
-[](images/update_table_multiple.jpg)
+![](images/update_table_multiple.jpg)
 Image showcasing multiple currencies and their price history.  
 
-[](images/update_table_multiple.jpg)
+![](images/update_table_multiple.jpg)
 Image showcasing single currency and it's price history.
 
-[](images/home_screen.jpg)
+![](images/home_screen.jpg)
 Image showcasing the application home screen. 
 
 
