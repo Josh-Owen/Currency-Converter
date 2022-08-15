@@ -16,6 +16,7 @@ import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.repository.enums.CurrencyType
+import com.joshowen.repository.ext.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -164,6 +165,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
     //region ActionMode.Callback
     override fun onCreateActionMode(actionMode: ActionMode, menu: Menu): Boolean {
         actionMode.menuInflater.inflate(R.menu.currency_selection_action_menu, menu)
+        binding.etAmount.isEnabled = false
         return true
     }
 
@@ -171,11 +173,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         return true
     }
 
-    fun <T> List<T>.getSelectedItems(selectedIndexes: List<Long>): List<T> {
-        return selectedIndexes.map {
-            this[it.toInt()]
-        }
-    }
+
 
     override fun onActionItemClicked(p0: ActionMode?, item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -183,9 +181,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
                 val selected = currencyAdapter.currentList.getSelectedItems(
                     tracker?.selection?.toList() ?: listOf()
-                )
-                    .map { it.first }
-                    .toTypedArray()
+                ).map { it.first }.toTypedArray()
 
                 navigateToCurrencyHistoryPage(selected)
 
@@ -200,6 +196,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         this.actionMode = null
         actionMode?.finish()
         tracker?.clearSelection()
+        binding.etAmount.isEnabled = true
     }
 
     //endregion
