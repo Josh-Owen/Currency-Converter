@@ -1,6 +1,6 @@
 # Currency-Converter
  
-Howdy! This is a simplistic currency converter application which allows for it's users to seamlessly
+Howdy! This is a lightweight currency converter application which allows for it's users to seamlessly
 convert Euros to a multitude of other currencies in the world and it achieves this in a reactive way.
 The application currently targets Android API version 21 and above.
 
@@ -25,35 +25,35 @@ Here is a showcase of some of the applications features:
 
 ![](images/updating_amount_to_convert.gif)
 
-Image updating the value which we would like to convert.
+Image updating the value which we would like to convert.\
 
 ![](images/multi_select.gif)
 
-Image showcasing the multi-select functionality and navigating to the currency history page. 
+Image showcasing the multi-select functionality and navigating to the currency history page. \
 
 ![](images/multi_select.jpg)
 
-Image showcasing the multi-select RecyclerView functionality.
+Image showcasing the multi-select RecyclerView functionality.\
 
 ![](images/update_table_multiple.jpg)
 
-Image showcasing multiple currencies and their price history.  
+Image showcasing multiple currencies and their price history. \ 
 
 ![](images/update_table_single.jpg)
 
-Image showcasing single currency and it's price history.
+Image showcasing single currency and it's price history.\
 
 ![](images/home_screen.jpg)
 
-Image showcasing the application home screen. 
+Image showcasing the application home screen. \
 
+<br />
+<br />
 
-
-
-I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date:
+I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date\
 
 - Implement a Retrofit Mock Server for UI tests
-- Finish integrating all of my mock test cases.
+- Finish integrating all of my mock test cases.\
 
 And that is all folks! Thank you for stopping by.
 
