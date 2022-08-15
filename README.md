@@ -31,10 +31,6 @@ Image updating the value which we would like to convert.<br />
 
 Image showcasing the multi-select functionality and navigating to the currency history page. <br />
 
-![](images/multi_select.jpg)
-
-Image showcasing the multi-select RecyclerView functionality.<br />
-
 ![](images/update_table_single.jpg)
 
 Image showcasing single currency and it's price history.<br />
