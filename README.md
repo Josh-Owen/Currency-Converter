@@ -27,6 +27,10 @@ Here is a showcase of some of the applications features:
 
 Image updating the value which we would like to convert.
 
+![](images/multi_select.gif)
+
+Image showcasing the multi-select functionality and navigating to the currency history page. 
+
 ![](images/multi_select.jpg)
 
 Image showcasing the multi-select RecyclerView functionality.
