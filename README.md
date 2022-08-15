@@ -35,13 +35,13 @@ Image showcasing the multi-select functionality and navigating to the currency h
 
 Image showcasing the multi-select RecyclerView functionality.<br />
 
-![](images/update_table_multiple.jpg)
-
-Image showcasing multiple currencies and their price history. <br /> 
-
 ![](images/update_table_single.jpg)
 
 Image showcasing single currency and it's price history.<br />
+
+![](images/update_table_multiple.jpg)
+
+Image showcasing multiple currencies and their price history. <br />
 
 ![](images/home_screen.jpg)
 
@@ -56,5 +56,4 @@ I actually ran out of time to work further on this project, but I am hoping to e
 - Finish integrating all of my mock test cases.<br />
 
 And that is all folks! Thank you for stopping by.
-
 
