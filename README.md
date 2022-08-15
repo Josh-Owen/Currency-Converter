@@ -21,7 +21,7 @@ Technologies used for the task:
 Here is a showcase of some of the applications features: 
 
 ### Showcase
-§
+
 
 ![](images/updating_amount_to_convert.gif)
 
