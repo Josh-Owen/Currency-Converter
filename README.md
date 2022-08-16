@@ -37,7 +37,7 @@ Image showcasing a single currency and it's price history.<br />
 
 ![](images/update_table_multiple.jpg)
 
-Image showcasing multiple currencies and their price history. <br />
+Image showcasing multiple currencies and the price history. <br />
 
 
 
