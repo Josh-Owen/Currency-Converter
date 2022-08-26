@@ -1,7 +1,8 @@
 package com.joshowen.forexexchangerates.test
 
+import android.app.Application
+import com.joshowen.forexexchangerates.TestDispatchers
 import com.joshowen.forexexchangerates.base.BaseUnitTest
-import com.joshowen.forexexchangerates.ext.getValueForTest
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
 import com.joshowen.repository.data.CurrencyHistory
@@ -12,6 +13,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.threeten.bp.LocalDate
@@ -36,11 +38,16 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     var mockedListOfCurrencyHistory: List<CurrencyHistory> = mock()
 
+    var application: Application = mock()
+
+    var testDispatchers : TestDispatchers = mock()
+
     private var expectedResponse = Result.success(mockedListOfCurrencyHistory)
 
     private val userSpecifiedAmountOfCurrency = "100"
 
-    private val expectedSpecifiedCurrencyOutput = "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
+    private val expectedSpecifiedCurrencyOutput =
+        "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,7 +57,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.setSupportedCurrencies(listOf(CurrencyType.JAPANESE_YEN))
         viewModel.fetchPriceHistory()
-        val state = viewModel.outputs.fetchUiState().getValueForTest() is CurrencyHistoryPageState.Loading
+        val state = viewModel.outputs.fetchUiState().last() is CurrencyHistoryPageState.Loading
         assertEquals(true, state)
     }
 
@@ -65,7 +72,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     fun displaysCorrectUserInputCurrencyFormat() = runTest {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-        val output = viewModel.outputs.fetchSpecifiedCurrencyAmount().getValueForTest()
+        val output = viewModel.outputs.fetchSpecifiedCurrencyAmount().last()
         assertEquals(expectedSpecifiedCurrencyOutput, output)
     }
 
@@ -83,19 +90,33 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     // region Test Cases
     private suspend fun mockErrorCase(): CurrencyHistoryFragmentVM {
-        whenever(repository.getPricedHistory(defaultCurrency, selectedCurrencies, startDate, endDate)).thenReturn(
+        whenever(
+            repository.getPricedHistory(
+                defaultCurrency,
+                selectedCurrencies,
+                startDate,
+                endDate
+            )
+        ).thenReturn(
             flow {
                 emit(Result.failure(genericRuntimeException))
             })
-        return CurrencyHistoryFragmentVM(repository)
+        return CurrencyHistoryFragmentVM(application, testDispatchers, repository)
     }
 
     private suspend fun mockSuccessfulCase(): CurrencyHistoryFragmentVM {
-        whenever(repository.getPricedHistory(defaultCurrency, selectedCurrencies, startDate, endDate)).thenReturn(
+        whenever(
+            repository.getPricedHistory(
+                defaultCurrency,
+                selectedCurrencies,
+                startDate,
+                endDate
+            )
+        ).thenReturn(
             flow {
-            emit(expectedResponse)
-        })
-        return CurrencyHistoryFragmentVM(repository)
+                emit(expectedResponse)
+            })
+        return CurrencyHistoryFragmentVM(application, testDispatchers, repository)
     }
     //endregion
 }

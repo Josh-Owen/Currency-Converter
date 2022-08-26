@@ -2,7 +2,7 @@ package com.joshowen.forexexchangerates.ext
 
 import java.text.DecimalFormat
 
-fun Double.roundToTwoDecimals() : String {
+fun Double.roundToTwoDecimalPlaces() : String {
     val df = DecimalFormat("0.00")
     df.minimumFractionDigits = 2
     df.maximumFractionDigits = 2

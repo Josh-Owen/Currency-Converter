@@ -1,7 +1,8 @@
 package com.joshowen.forexexchangerates.test
 
+import android.app.Application
+import app.cash.turbine.test
 import com.joshowen.forexexchangerates.base.BaseUnitTest
-import com.joshowen.forexexchangerates.ext.captureValues
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
 import com.joshowen.repository.data.Currency
@@ -13,6 +14,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.*
 import org.junit.Test
@@ -28,6 +30,8 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     var mockedListOfCurrencies: List<Pair<CurrencyType, String>> = mock()
 
     var expectedResult = Result.success(expectedResponseFromRepository)
+
+    var application : Application = mock()
 
     private val supportedCurrencies = listOf(
         CurrencyType.EUROS.currencyCode,
@@ -54,19 +58,21 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isFetchLatestCurrencyPricesInvoked() = runTest {
+    fun isFetchLatestCurrencyPricesInvoked() = runBlocking {
         val viewModel = mockSuccessfulCase()
-        viewModel.outputs.fetchUiState().captureValues {
+        viewModel.outputs.fetchUiState().test {
+            awaitItem()
             verify(repository, times(1)).getCurrencyInformation(defaultCurrency, supportedCurrencies)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun doesEmitDefaultApplicationCurrency() = runTest {
+    fun doesEmitDefaultApplicationCurrency() = runBlocking {
         val viewModel = mockSuccessfulCase()
-        viewModel.outputs.fetchDefaultApplicationCurrency().captureValues {
-            assertEquals(defaultCurrency.currencyCode, values[0])
+        viewModel.outputs.fetchDefaultApplicationCurrency().test {
+            val emission = awaitItem()
+            assertEquals(defaultCurrency.currencyCode, emission)
         }
     }
 
@@ -92,8 +98,8 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     fun showSpinnerWhilstLoading() = runTest {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setCurrencyAmount(100)
-        viewModel.outputs.fetchUiState().captureValues {
-            assertEquals(true, values.first() is CurrencyListPageState.Loading)
+        viewModel.outputs.fetchUiState().collectLatest {
+            assertEquals(true, it is CurrencyListPageState.Loading)
         }
     }
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -106,20 +112,20 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     // region Test Cases
     private suspend fun mockErrorCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(repository)
+        val viewModel = CurrencyListFragmentVM(application, repository)
         whenever(repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)
         ).thenReturn(flow {
-            delay(500)
+//            delay(500)
             emit(Result.failure(genericRuntimeException))
         })
         return viewModel
     }
 
     private suspend fun mockSuccessfulCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(repository)
+        val viewModel = CurrencyListFragmentVM(application, repository)
 
         whenever(repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)).thenReturn(flow {
-            withContext(Dispatchers.IO) { delay(2000) }
+//            withContext(Dispatchers.IO) { delay(2000) }
             emit(expectedResult)
         })
         return viewModel
