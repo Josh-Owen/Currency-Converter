@@ -31,7 +31,7 @@ interface CurrentListFragmentVMOutputs {
 //endregion
 
 @HiltViewModel
-class CurrencyListFragmentVM @Inject constructor(application: Application, private val dispatchersProvider: DispatchersProvider, private val foreignExchangeRepo: ForeignExchangeRepository): BaseViewModel(application),CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
+class CurrencyListFragmentVM @Inject constructor(application: Application, private val dispatchers: DispatchersProvider, private val foreignExchangeRepo: ForeignExchangeRepository): BaseViewModel(application),CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
 
     //region Variables & Class Members
     val inputs: CurrentListFragmentVMInputs = this
@@ -49,7 +49,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
 
     init {
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.io) {
             fetchCurrencyInformation()
             amountToConvertFlow
                 .combine(exchangeRatesFlow) { amountToConvert, selectedCurrenciesExchangeRates ->
@@ -75,13 +75,13 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
 
     //region Outputs
     override fun fetchUiState(): Flow<CurrencyListPageState> {
-        return uiState
+        return uiState.flowOn(dispatchers.io)
     }
 
     override fun fetchDefaultApplicationCurrency(): Flow<String> {
         return flow {
             emit(DEFAULT_APP_CURRENCY.currencyCode)
-        }
+        }.flowOn(dispatchers.io)
     }
 
     override fun fetchSpecifiedAmount(): Flow<Int> {
@@ -95,6 +95,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
         _uiState.value = CurrencyListPageState.Loading
 
         foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
+            .flowOn(dispatchers.io)
             .collectLatest {
                 try {
                     if (it.isSuccess) {
