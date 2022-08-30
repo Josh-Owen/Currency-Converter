@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshowen.forexexchangerates.databinding.HistoricListItemBinding
 import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
 import com.joshowen.forexexchangerates.ext.display
-import com.joshowen.forexexchangerates.ext.roundToTwoDecimals
+import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
 import com.joshowen.repository.data.CurrencyHistory
 
 class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
@@ -168,52 +168,52 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
 
             priceInformation.currencyPriceHistory.EUR?.let {
                 tvEuros.display()
-                tvEuros.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvEuros.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.USD?.let {
                 tvUSDollars.display()
-                tvUSDollars.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvUSDollars.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.JPY?.let {
                 tvJapaneseYuan.display()
-                tvJapaneseYuan.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvJapaneseYuan.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.GBP?.let {
                 tvGreatBritishPounds.display()
-                tvGreatBritishPounds.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvGreatBritishPounds.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.AUD?.let {
                 tvAustralianDollar.display()
-                tvAustralianDollar.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvAustralianDollar.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.CAD?.let {
                 tvCanadianDollars.display()
-                tvCanadianDollars.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvCanadianDollars.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.CHF?.let {
                 tvSwissFranc.display()
-                tvSwissFranc.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvSwissFranc.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.CNY?.let {
                 tvChineseYuan.display()
-                tvChineseYuan.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvChineseYuan.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.SEK?.let {
                 tvSwedishKrona.display()
-                tvSwedishKrona.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvSwedishKrona.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
             priceInformation.currencyPriceHistory.NZD?.let {
                 tvNewZealandDollar.display()
-                tvNewZealandDollar.text = (specifiedAmount * it).roundToTwoDecimals()
+                tvNewZealandDollar.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
             }
 
         }

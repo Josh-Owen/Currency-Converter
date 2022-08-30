@@ -1,10 +1,14 @@
 package com.joshowen.forexexchangerates.ui.currencylist
 
+import android.app.Application
 import androidx.lifecycle.*
+import com.joshowen.forexexchangerates.DispatchersProvider
+import com.joshowen.forexexchangerates.R
+import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
-import com.joshowen.forexexchangerates.ext.roundToTwoDecimals
+import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
 import com.joshowen.repository.data.Currency
 import com.joshowen.repository.repository.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,14 +24,14 @@ interface CurrentListFragmentVMInputs {
 
 //region CurrentListFragmentVMOutputs
 interface CurrentListFragmentVMOutputs {
-    fun fetchUiState() : LiveData<CurrencyListPageState>
-    fun fetchDefaultApplicationCurrency() : LiveData<String>
+    fun fetchUiState() : Flow<CurrencyListPageState>
+    fun fetchDefaultApplicationCurrency() : Flow<String>
     fun fetchSpecifiedAmount() : Flow<Int>
 }
 //endregion
 
 @HiltViewModel
-class CurrencyListFragmentVM @Inject constructor(private val foreignExchangeRepo: ForeignExchangeRepository): ViewModel(),CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
+class CurrencyListFragmentVM @Inject constructor(application: Application, private val dispatchers: DispatchersProvider, private val foreignExchangeRepo: ForeignExchangeRepository): BaseViewModel(application),CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
 
     //region Variables & Class Members
     val inputs: CurrentListFragmentVMInputs = this
@@ -37,26 +41,28 @@ class CurrencyListFragmentVM @Inject constructor(private val foreignExchangeRepo
     private val amountToConvertFlow = amountToConvert.asStateFlow()
     private val exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
     private val exchangeRatesFlow = exchangeRates.asStateFlow()
-    private val uiState = MutableLiveData<CurrencyListPageState>(null)
+    private val _uiState =
+        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Success(emptyList()))
+    private val uiState: Flow<CurrencyListPageState> = _uiState
 
     //endregion
 
     init {
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.io) {
             fetchCurrencyInformation()
             amountToConvertFlow
-                .combine(exchangeRatesFlow) { amountToConvert, apiResponse ->
-                    val updatedValues = apiResponse.map { currentSymbol ->
+                .combine(exchangeRatesFlow) { amountToConvert, selectedCurrenciesExchangeRates ->
+                    val updatedValues = selectedCurrenciesExchangeRates.map { currentSymbol ->
                         Pair(
                             currentSymbol.currency,
                             (amountToConvert * (currentSymbol.price ?: 0.0))
-                                .roundToTwoDecimals()
+                                .roundToTwoDecimalPlaces()
                         )
                     }
                     updatedValues
                 }
-                .onEach { uiState.value = CurrencyListPageState.Success(it) }
+                .onEach { _uiState.value = CurrencyListPageState.Success(it) }
                 .collect()
         }
     }
@@ -68,14 +74,14 @@ class CurrencyListFragmentVM @Inject constructor(private val foreignExchangeRepo
     //endregion
 
     //region Outputs
-    override fun fetchUiState(): LiveData<CurrencyListPageState> {
-        return uiState
+    override fun fetchUiState(): Flow<CurrencyListPageState> {
+        return uiState.flowOn(dispatchers.io)
     }
 
-    override fun fetchDefaultApplicationCurrency(): LiveData<String> {
-        return liveData {
+    override fun fetchDefaultApplicationCurrency(): Flow<String> {
+        return flow {
             emit(DEFAULT_APP_CURRENCY.currencyCode)
-        }
+        }.flowOn(dispatchers.io)
     }
 
     override fun fetchSpecifiedAmount(): Flow<Int> {
@@ -85,22 +91,26 @@ class CurrencyListFragmentVM @Inject constructor(private val foreignExchangeRepo
     //endregion
 
     private suspend fun fetchCurrencyInformation() {
-        if (uiState.value is CurrencyListPageState.Success) return
 
-        uiState.value = CurrencyListPageState.Loading
+        _uiState.value = CurrencyListPageState.Loading
 
         foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
+            .flowOn(dispatchers.io)
             .collectLatest {
                 try {
                     if (it.isSuccess) {
                         exchangeRates.value = it.getOrNull() ?: listOf()
                     } else {
-                        uiState.value = CurrencyListPageState.Error("Something went wrong.")
+                        _uiState.value = CurrencyListPageState.Error(
+                            getApplication<Application>().getString(
+                                R.string.generic_network_error
+                            )
+                        )
                     }
-                } catch (e: Exception) {
-                    uiState.value =
+                } catch (exception: Exception) {
+                    _uiState.value =
                         CurrencyListPageState.Error(
-                            e.message ?: ""
+                            exception.message.toString()
                         )
                 }
             }

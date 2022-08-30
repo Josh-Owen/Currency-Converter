@@ -120,7 +120,12 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.outputs.fetchUiState().observe(viewLifecycleOwner) {
+
+                viewModel.outputs.fetchDefaultApplicationCurrency().collectLatest {
+                    binding.tvDefaultCurrencyTitle.text = it
+                }
+
+                viewModel.outputs.fetchUiState().collectLatest {
                     binding.pbLoadCurrency.visibility =
                         if (it is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
                     if (it is CurrencyListPageState.Success) {
@@ -132,9 +137,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                }
-                viewModel.outputs.fetchDefaultApplicationCurrency().observe(viewLifecycleOwner) {
-                    binding.tvDefaultCurrencyTitle.text = it
                 }
             }
         }

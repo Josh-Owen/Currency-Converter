@@ -13,6 +13,7 @@ import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyHistoryBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -50,11 +51,11 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
                 viewModel.fetchPriceHistory()
 
-                viewModel.outputs.fetchSpecifiedCurrencyAmount().observe(viewLifecycleOwner) {
-                    binding.tvCurrencyAndAmount.text = it.toString()
+                viewModel.outputs.fetchSpecifiedCurrencyAmount().collectLatest{
+                    binding.tvCurrencyAndAmount.text = it
                 }
 
-                viewModel.fetchUiState().observe(viewLifecycleOwner) {
+                viewModel.fetchUiState().collectLatest {
 
                     binding.pbLoadingPriceHistory.visibility =
                         if (it is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
@@ -79,5 +80,4 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
         }
     }
     //endregion
-
 }
