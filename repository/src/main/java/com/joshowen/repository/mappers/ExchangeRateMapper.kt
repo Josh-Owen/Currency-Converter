@@ -2,7 +2,7 @@ package com.joshowen.repository.mappers
 
 import com.joshowen.repository.data.Currency
 import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
 import javax.inject.Inject
 
 internal class ExchangeRateMapper @Inject constructor(): Function1<ExchangeRateItemRawResponse, List<Currency>> {

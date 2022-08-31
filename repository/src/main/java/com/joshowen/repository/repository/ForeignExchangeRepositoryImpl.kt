@@ -42,10 +42,10 @@ class ForeignExchangeRepositoryImpl @Inject internal constructor(private val for
 
         return flow {
             val apiResponse = foreignExchangeAPI.fetchHistoricPricesForSymbol(startDate, endDate, selectedCurrencyCodes, baseCurrency.currencyCode)
-            val mappedToRates = apiResponse.rates.map {
+            val mappedExchangeRates = apiResponse.rates.map {
                 exchangeHistoryMapper.invoke(it.toPair())
             }
-            emit(Result.success(mappedToRates))
+            emit(Result.success(mappedExchangeRates))
         }.catch {
             emit(Result.failure(it))
         }

@@ -2,7 +2,7 @@ package com.joshowen.repository.mappers
 
 import com.joshowen.repository.data.CurrencyHistory
 import com.joshowen.repository.data.CurrencyHistoryItem
-import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
 
 import javax.inject.Inject
 

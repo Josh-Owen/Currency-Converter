@@ -4,7 +4,7 @@ import com.joshowen.repository.base.BaseUnitTest
 import com.joshowen.repository.data.CurrencyHistory
 import com.joshowen.repository.data.CurrencyHistoryItem
 import com.joshowen.repository.mappers.ExchangeRateHistoricMapper
-import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

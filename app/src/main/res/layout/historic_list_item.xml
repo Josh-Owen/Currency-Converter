@@ -1,167 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="100"
+    android:background="@drawable/table_border"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="30"
         android:background="@drawable/table_border"
-        android:layout_weight="100">
+        android:gravity="center"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:text="@string/currency_history_table_date_title"
+        android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/tvFirstCurrency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/table_border"
+            android:layout_weight="20"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/tvSecondCurrency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="20"
+            android:background="@drawable/table_border"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvDate"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="30"
-                android:gravity="center"
-                android:text="@string/currency_history_table_date_title"
-                android:background="@drawable/table_border"
-                android:textSize="14sp"
-                android:visibility="gone" />
+        <TextView
+            android:id="@+id/tvThirdCurrency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="20"
+            android:background="@drawable/table_border"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvEuros"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:gravity="center"
-                android:background="@drawable/table_border"
-                android:text="@string/currency_codes_eur"
-                android:visibility="gone"
-                android:textSize="14sp"
-                 />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvUsDollars"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_usd"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvJapaneseYen"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_jpy"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvBritishPounds"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_gbp"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvAustralianDollars"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_aud"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvCanadianDollars"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_cad"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvSwissFranc"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_chf"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvChineseYuan"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_cny"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvSwedishKrona"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:gravity="center"
-                android:text="@string/currency_codes_sek"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:paddingStart="2dp"
-                android:paddingEnd="2dp"
-                android:id="@+id/tvNewZealandDollars"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="23.3"
-                android:background="@drawable/table_border"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:text="@string/currency_codes_nzd"
-                android:visibility="gone" />
-
-    </LinearLayout>
+</LinearLayout>

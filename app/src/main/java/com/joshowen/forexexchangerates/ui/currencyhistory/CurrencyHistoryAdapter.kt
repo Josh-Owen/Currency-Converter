@@ -3,9 +3,11 @@ package com.joshowen.forexexchangerates.ui.currencyhistory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.databinding.HistoricListItemBinding
 import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
 import com.joshowen.forexexchangerates.ext.display
@@ -86,60 +88,66 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
     inner class HeaderViewHolder(binding: HistoricListItemHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val tvDate: TextView = binding.tvDateHeader
-        private val tvEuros: TextView = binding.tvEurosHeader
-        private val tvUSDollars: TextView = binding.tvUsDollarsHeader
-        private val tvJapaneseYuan: TextView = binding.tvJapaneseYenHeader
-        private val tvGreatBritishPounds: TextView = binding.tvBritishPoundsHeader
-        private val tvAustralianDollar: TextView = binding.tvAustralianDollarsHeader
-        private val tvCanadianDollars: TextView = binding.tvCanadianDollarsHeader
-        private val tvSwissFranc: TextView = binding.tvSwissFrancHeader
-        private val tvChineseYuan: TextView = binding.tvChineseYuanHeader
-        private val tvSwedishKrona: TextView = binding.tvSwedishKronaHeader
-        private val tvNewZealandDollar: TextView = binding.tvNewZealandDollarsHeader
+        private val tvFirstCurrencyHeader: TextView = binding.tvFirstCurrencyHeader
+        private val tvSecondCurrencyHeader: TextView = binding.tvSecondCurrencyHeader
+        private val tvThirdCurrencyHeader: TextView = binding.tvThirdCurrencyHeader
 
         fun bind(priceInformation: CurrencyHistory) {
 
-            tvDate.display()
-
             priceInformation.currencyPriceHistory.EUR?.let {
-                tvEuros.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_eur)
             }
 
             priceInformation.currencyPriceHistory.USD?.let {
-                tvUSDollars.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_usd)
             }
 
             priceInformation.currencyPriceHistory.JPY?.let {
-                tvJapaneseYuan.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_jpy)
             }
 
             priceInformation.currencyPriceHistory.GBP?.let {
-                tvGreatBritishPounds.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_gbp)
             }
 
             priceInformation.currencyPriceHistory.AUD?.let {
-                tvAustralianDollar.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_aud)
             }
 
             priceInformation.currencyPriceHistory.CAD?.let {
-                tvCanadianDollars.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_cad)
             }
 
             priceInformation.currencyPriceHistory.CHF?.let {
-                tvSwissFranc.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_chf)
             }
 
             priceInformation.currencyPriceHistory.CNY?.let {
-                tvChineseYuan.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_cny)
             }
 
             priceInformation.currencyPriceHistory.SEK?.let {
-                tvSwedishKrona.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_sek)
             }
 
             priceInformation.currencyPriceHistory.NZD?.let {
-                tvNewZealandDollar.display()
+                initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_nzd)
+            }
+        }
+
+        private fun initialiseAndDisplayCorrespondingHeader(titleResourceId : Int) {
+
+            if (!tvFirstCurrencyHeader.isVisible) {
+                tvFirstCurrencyHeader.setText(titleResourceId)
+                tvFirstCurrencyHeader.display()
+            } else if (!tvSecondCurrencyHeader.isVisible) {
+                tvSecondCurrencyHeader.setText(titleResourceId)
+                tvSecondCurrencyHeader.display()
+            } else if (!tvThirdCurrencyHeader.isVisible) {
+                tvThirdCurrencyHeader.setText(titleResourceId)
+                tvThirdCurrencyHeader.display()
+            } else {
+                return
             }
         }
     }
@@ -150,72 +158,73 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
         RecyclerView.ViewHolder(binding.root) {
 
         private val tvDate: TextView = binding.tvDate
-        private val tvEuros: TextView = binding.tvEuros
-        private val tvUSDollars: TextView = binding.tvUsDollars
-        private val tvJapaneseYuan: TextView = binding.tvJapaneseYen
-        private val tvGreatBritishPounds: TextView = binding.tvBritishPounds
-        private val tvAustralianDollar: TextView = binding.tvAustralianDollars
-        private val tvCanadianDollars: TextView = binding.tvCanadianDollars
-        private val tvSwissFranc: TextView = binding.tvSwissFranc
-        private val tvChineseYuan: TextView = binding.tvChineseYuan
-        private val tvSwedishKrona: TextView = binding.tvSwedishKrona
-        private val tvNewZealandDollar: TextView = binding.tvNewZealandDollars
+        private val tvFirstCurrency: TextView = binding.tvFirstCurrency
+        private val tvSecondCurrency: TextView = binding.tvSecondCurrency
+        private val tvThirdCurrency: TextView = binding.tvThirdCurrency
 
         fun bind(priceInformation: CurrencyHistory) {
 
             tvDate.text = priceInformation.date
-            tvDate.display()
+
+            priceInformation.currencyPriceHistory
+
 
             priceInformation.currencyPriceHistory.EUR?.let {
-                tvEuros.display()
-                tvEuros.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.USD?.let {
-                tvUSDollars.display()
-                tvUSDollars.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.JPY?.let {
-                tvJapaneseYuan.display()
-                tvJapaneseYuan.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.GBP?.let {
-                tvGreatBritishPounds.display()
-                tvGreatBritishPounds.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.AUD?.let {
-                tvAustralianDollar.display()
-                tvAustralianDollar.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.CAD?.let {
-                tvCanadianDollars.display()
-                tvCanadianDollars.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.CHF?.let {
-                tvSwissFranc.display()
-                tvSwissFranc.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.CNY?.let {
-                tvChineseYuan.display()
-                tvChineseYuan.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.SEK?.let {
-                tvSwedishKrona.display()
-                tvSwedishKrona.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
             priceInformation.currencyPriceHistory.NZD?.let {
-                tvNewZealandDollar.display()
-                tvNewZealandDollar.text = (specifiedAmount * it).roundToTwoDecimalPlaces()
+                initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
+        }
 
+
+        private fun initialiseAndDisplayCorrespondingCurrency(amount : String) {
+
+            if (!tvFirstCurrency.isVisible) {
+                tvFirstCurrency.text = amount
+                tvFirstCurrency.display()
+            } else if (!tvSecondCurrency.isVisible) {
+                tvSecondCurrency.text = amount
+                tvSecondCurrency.display()
+            } else if (!tvThirdCurrency.isVisible) {
+                tvThirdCurrency.text = amount
+                tvThirdCurrency.display()
+            } else {
+                return
+            }
         }
     }
     //endregion

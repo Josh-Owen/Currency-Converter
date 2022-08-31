@@ -66,6 +66,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                 override fun canSelectMultiple(): Boolean {
                     return true
                 }
+
                 override fun canSetStateForKey(key: Long, nextState: Boolean): Boolean {
                     if (nextState && (tracker?.selection?.size() ?: 0) >= MAX_SELECTIONS) {
                         tracker?.selection?.iterator()?.next()?.let {
@@ -74,6 +75,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                     }
                     return true
                 }
+
                 override fun canSetStateAtPosition(position: Int, nextState: Boolean): Boolean {
                     return true
                 }
@@ -128,11 +130,12 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                 viewModel.outputs.fetchUiState().collectLatest {
                     binding.pbLoadCurrency.visibility =
                         if (it is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
+
                     if (it is CurrencyListPageState.Success) {
                         currencyAdapter.submitList(it.data)
                     } else if (it is CurrencyListPageState.Error) {
                         Snackbar.make(
-                           binding.root,
+                            binding.root,
                             getString(R.string.generic_network_error),
                             Snackbar.LENGTH_LONG
                         ).show()
@@ -141,7 +144,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
             }
         }
     }
-
 
     override fun initArgs(arguments: Bundle) {
         super.initArgs(arguments)
@@ -174,7 +176,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
     override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
         return true
     }
-
 
 
     override fun onActionItemClicked(p0: ActionMode?, item: MenuItem): Boolean {

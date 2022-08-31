@@ -1,7 +1,7 @@
 package com.joshowen.repository.retrofit
 
-import com.joshowen.repository.retrofit.result.ExchangeRateResponse
-import com.joshowen.repository.retrofit.result.FetchHistoricTimeSeriesResult
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateResponse
+import com.joshowen.repository.retrofit.responses.historic.FetchHistoricTimeSeriesResult
 import org.threeten.bp.LocalDate
 import retrofit2.http.GET
 import retrofit2.http.Query

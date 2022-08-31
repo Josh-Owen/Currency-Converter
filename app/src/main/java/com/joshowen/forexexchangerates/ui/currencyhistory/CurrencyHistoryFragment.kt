@@ -71,9 +71,7 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }
-                        else -> {
-
-                        }
+                        else -> {}
                     }
                 }
             }
