@@ -2,7 +2,7 @@ package com.joshowen.repository.retrofit.result
 
 import com.google.gson.annotations.SerializedName
 
-data class ExchangeRateResponse (
+internal data class ExchangeRateResponse (
     @SerializedName("base")
     val base: String?,
     @SerializedName("date")

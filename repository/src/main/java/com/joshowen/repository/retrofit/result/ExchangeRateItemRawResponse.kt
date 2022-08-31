@@ -2,7 +2,7 @@ package com.joshowen.repository.retrofit.result
 
 import com.google.gson.annotations.SerializedName
 
-class ExchangeRateItemRawResponse(
+internal class ExchangeRateItemRawResponse(
     @SerializedName("USD")
     val USD : Double?,
     @SerializedName("EUR")

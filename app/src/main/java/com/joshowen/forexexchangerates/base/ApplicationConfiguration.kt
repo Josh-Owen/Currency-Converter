@@ -2,9 +2,9 @@ package com.joshowen.forexexchangerates.base
 
 import com.joshowen.repository.enums.CurrencyType
 
-val DEFAULT_APP_CURRENCY : CurrencyType = CurrencyType.EUROS
+ val DEFAULT_APP_CURRENCY : CurrencyType = CurrencyType.EUROS
 
-val SUPPORTED_CURRENCIES = listOf(
+ val SUPPORTED_CURRENCIES = listOf(
     CurrencyType.EUROS.currencyCode,
     CurrencyType.US_DOLLARS.currencyCode,
     CurrencyType.JAPANESE_YEN.currencyCode,
@@ -17,6 +17,6 @@ val SUPPORTED_CURRENCIES = listOf(
     CurrencyType.NEW_ZEALAND_DOLLARS.currencyCode
 ).joinToString()
 
-val DEFAULT_APPLICATION_CONVERSION_AMOUNT = 100
+const val DEFAULT_APPLICATION_CONVERSION_AMOUNT = 100
 
 

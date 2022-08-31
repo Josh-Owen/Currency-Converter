@@ -6,7 +6,7 @@ import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
 
 import javax.inject.Inject
 
-class ExchangeRateHistoricMapper @Inject constructor(): Function1<Pair<String, ExchangeRateItemRawResponse>, CurrencyHistory> {
+internal class ExchangeRateHistoricMapper @Inject constructor(): Function1<Pair<String, ExchangeRateItemRawResponse>, CurrencyHistory> {
     override fun invoke(rawExchangeRates: Pair<String, ExchangeRateItemRawResponse>): CurrencyHistory {
         return CurrencyHistory(
             rawExchangeRates.first, CurrencyHistoryItem(

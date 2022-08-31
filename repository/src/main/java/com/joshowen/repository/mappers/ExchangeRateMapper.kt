@@ -5,7 +5,7 @@ import com.joshowen.repository.enums.CurrencyType
 import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
 import javax.inject.Inject
 
-class ExchangeRateMapper @Inject constructor(): Function1<ExchangeRateItemRawResponse, List<Currency>> {
+internal class ExchangeRateMapper @Inject constructor(): Function1<ExchangeRateItemRawResponse, List<Currency>> {
     override fun invoke(rawExchangeRates: ExchangeRateItemRawResponse): List<Currency> {
         return listOf(
             Currency(CurrencyType.US_DOLLARS, rawExchangeRates.USD),

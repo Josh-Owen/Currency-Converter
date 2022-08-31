@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object FXExchangeModule {
+internal object FXExchangeModule {
 
     //region variables
     private const val BASE_URL = "https://api.apilayer.com/fixer/"

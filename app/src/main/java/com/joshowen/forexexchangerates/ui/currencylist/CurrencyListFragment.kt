@@ -16,7 +16,7 @@ import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.repository.ext.getSelectedItems
+import com.joshowen.forexexchangerates.ext.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

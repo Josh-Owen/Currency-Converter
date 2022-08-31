@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ForeignExchangeRepositoryImpl @Inject constructor(private val foreignExchangeAPI: ForeignExchangeAPI, private val exchangeRateMapper : ExchangeRateMapper, private val exchangeHistoryMapper : ExchangeRateHistoricMapper ) : ForeignExchangeRepository {
+class ForeignExchangeRepositoryImpl @Inject internal constructor(private val foreignExchangeAPI: ForeignExchangeAPI, private val exchangeRateMapper : ExchangeRateMapper, private val exchangeHistoryMapper : ExchangeRateHistoricMapper) : ForeignExchangeRepository {
 
     //region ForeignExchangeRepository
     override fun getCurrencyInformation(

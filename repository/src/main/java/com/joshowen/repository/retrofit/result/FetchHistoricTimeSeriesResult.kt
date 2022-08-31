@@ -3,7 +3,7 @@ package com.joshowen.repository.retrofit.result
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
-data class FetchHistoricTimeSeriesResult (
+internal data class FetchHistoricTimeSeriesResult (
     @SerializedName("base")
     val base: String?,
     @SerializedName("date")
