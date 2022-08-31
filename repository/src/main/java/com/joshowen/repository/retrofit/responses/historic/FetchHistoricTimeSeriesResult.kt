@@ -1,6 +1,7 @@
-package com.joshowen.repository.retrofit.result
+package com.joshowen.repository.retrofit.responses.historic
 
 import com.google.gson.annotations.SerializedName
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
 import java.util.*
 
 internal data class FetchHistoricTimeSeriesResult (

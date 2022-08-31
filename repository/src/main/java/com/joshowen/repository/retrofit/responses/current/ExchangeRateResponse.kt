@@ -1,4 +1,4 @@
-package com.joshowen.repository.retrofit.result
+package com.joshowen.repository.retrofit.responses.current
 
 import com.google.gson.annotations.SerializedName
 
