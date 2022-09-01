@@ -2,6 +2,8 @@ package com.joshowen.forexexchangerates.di
 
 import com.joshowen.forexexchangerates.DefaultDispatchers
 import com.joshowen.forexexchangerates.DispatchersProvider
+import com.joshowen.repository.repository.ForeignExchangeRepository
+import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
 
 import dagger.Binds
 import dagger.Module
@@ -16,5 +18,10 @@ interface AppModule {
     @Binds
     @ViewModelScoped
     fun getDispatchers(dispatcher: DefaultDispatchers): DispatchersProvider
+
+    @Binds
+    @ViewModelScoped
+    fun getForeignExchangeRepository(repository: ForeignExchangeRepositoryImpl): ForeignExchangeRepository
+
 
 }
