@@ -13,6 +13,7 @@ import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
 import com.joshowen.forexexchangerates.ext.display
 import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
 import com.joshowen.repository.data.CurrencyHistory
+import com.joshowen.repository.enums.CurrencyType
 
 class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
 
@@ -94,43 +95,43 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
 
         fun bind(priceInformation: CurrencyHistory) {
 
-            priceInformation.currencyPriceHistory.EUR?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.EUROS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_eur)
             }
 
-            priceInformation.currencyPriceHistory.USD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_usd)
             }
 
-            priceInformation.currencyPriceHistory.JPY?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_jpy)
             }
 
-            priceInformation.currencyPriceHistory.GBP?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_gbp)
             }
 
-            priceInformation.currencyPriceHistory.AUD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_aud)
             }
 
-            priceInformation.currencyPriceHistory.CAD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_cad)
             }
 
-            priceInformation.currencyPriceHistory.CHF?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_chf)
             }
 
-            priceInformation.currencyPriceHistory.CNY?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_cny)
             }
 
-            priceInformation.currencyPriceHistory.SEK?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_sek)
             }
 
-            priceInformation.currencyPriceHistory.NZD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingHeader(R.string.currency_codes_nzd)
             }
         }
@@ -166,50 +167,46 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
 
             tvDate.text = priceInformation.date
 
-            priceInformation.currencyPriceHistory
-
-
-            priceInformation.currencyPriceHistory.EUR?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.EUROS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.USD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.JPY?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.GBP?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.AUD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.CAD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.CHF?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.CNY?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.SEK?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
 
-            priceInformation.currencyPriceHistory.NZD?.let {
+            priceInformation.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS }?.price?.let {
                 initialiseAndDisplayCorrespondingCurrency((specifiedAmount * it).roundToTwoDecimalPlaces())
             }
         }
-
 
         private fun initialiseAndDisplayCorrespondingCurrency(amount : String) {
 
