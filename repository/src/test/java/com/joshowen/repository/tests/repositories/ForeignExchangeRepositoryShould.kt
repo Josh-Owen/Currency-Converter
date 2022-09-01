@@ -6,9 +6,9 @@ import com.joshowen.repository.mappers.ExchangeRateHistoricMapper
 import com.joshowen.repository.mappers.ExchangeRateMapper
 import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
 import com.joshowen.repository.retrofit.ForeignExchangeAPI
-import com.joshowen.repository.retrofit.result.ExchangeRateItemRawResponse
-import com.joshowen.repository.retrofit.result.ExchangeRateResponse
-import com.joshowen.repository.retrofit.result.FetchHistoricTimeSeriesResult
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
+import com.joshowen.repository.retrofit.responses.current.ExchangeRateResponse
+import com.joshowen.repository.retrofit.responses.historic.FetchHistoricTimeSeriesResult
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify

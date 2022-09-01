@@ -21,6 +21,7 @@ class CurrencyHistoryFragmentTest : BaseUITest() {
 
     // Navigation
     fun navigateToCurrencyPage() {
+
         Espresso.onView(
             CoreMatchers.allOf(
                 withId(R.id.tvCurrencyName),

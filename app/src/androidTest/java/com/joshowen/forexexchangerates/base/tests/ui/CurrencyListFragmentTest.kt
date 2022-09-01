@@ -9,9 +9,15 @@ import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assert
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.base.BaseUITest
+import com.joshowen.forexexchangerates.base.utils.FileReader
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okhttp3.tls.HandshakeCertificates
+import okhttp3.tls.HeldCertificate
 import org.junit.Test
 
 class CurrencyListFragmentTest : BaseUITest() {
+
 
     //region Variables & Class Members
 
@@ -19,6 +25,16 @@ class CurrencyListFragmentTest : BaseUITest() {
     //endregion
 
     //region Tests
+
+    @Test
+    fun netWorkTest(){
+        mockWebServer.enqueue(MockResponse()
+            .setBody(FileReader.readStringFromFile("network_files/FetchCurrentPriceResponse.json")).setResponseCode(200))
+
+
+        activityTestRule.launchActivity(null)
+        Thread.sleep(2000)
+    }
 
     @Test
     fun displayScreenTitle() {

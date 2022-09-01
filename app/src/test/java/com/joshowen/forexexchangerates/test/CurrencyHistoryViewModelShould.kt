@@ -8,14 +8,15 @@ import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageSta
 import com.joshowen.repository.data.CurrencyHistory
 import com.joshowen.repository.enums.CurrencyType
 import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
 import java.lang.RuntimeException
 
@@ -39,8 +40,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     var mockedListOfCurrencyHistory: List<CurrencyHistory> = mock()
 
     var application: Application = mock()
-
-    var testDispatchers : TestDispatchers = mock()
 
     private var expectedResponse = Result.success(mockedListOfCurrencyHistory)
 

@@ -2,24 +2,30 @@ package com.joshowen.forexexchangerates.test
 
 import android.app.Application
 import app.cash.turbine.test
+import com.joshowen.forexexchangerates.TestDispatchers
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
 import com.joshowen.repository.data.Currency
 import com.joshowen.repository.enums.CurrencyType
 import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.*
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.lang.RuntimeException
 
+@RunWith(MockitoJUnitRunner::class)
 class CurrencyListViewModelShould : BaseUnitTest() {
 
     //region Variables & Class Members
@@ -58,21 +64,29 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isFetchLatestCurrencyPricesInvoked() = runBlocking {
+    fun isFetchLatestCurrencyPricesInvoked() = runTest {
         val viewModel = mockSuccessfulCase()
-        viewModel.outputs.fetchUiState().test {
-            awaitItem()
-            verify(repository, times(1)).getCurrencyInformation(defaultCurrency, supportedCurrencies)
-        }
+
+        viewModel.outputs.fetchUiState()
+            .test {
+                awaitItem()
+                verify(repository, times(1)).getCurrencyInformation(
+                    defaultCurrency,
+                    supportedCurrencies
+                )
+                cancelAndConsumeRemainingEvents()
+            }
+
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun doesEmitDefaultApplicationCurrency() = runBlocking {
+    fun doesEmitDefaultApplicationCurrency() = runBlocking(testDispatchers.main) {
         val viewModel = mockSuccessfulCase()
-        viewModel.outputs.fetchDefaultApplicationCurrency().test {
+        viewModel.outputs.fetchDefaultApplicationCurrency().testWithScheduler {
             val emission = awaitItem()
             assertEquals(defaultCurrency.currencyCode, emission)
+            cancelAndConsumeRemainingEvents()
         }
     }
 
@@ -95,37 +109,50 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun showSpinnerWhilstLoading() = runTest {
-        val viewModel = mockSuccessfulCase()
-        viewModel.inputs.setCurrencyAmount(100)
-        viewModel.outputs.fetchUiState().collectLatest {
-            assertEquals(true, it is CurrencyListPageState.Loading)
-        }
+    fun showSpinnerWhilstLoading() = runBlocking {
+            val viewModel = mockSuccessfulCase()
+            viewModel.inputs.setCurrencyAmount(105)
+            viewModel.outputs
+                .fetchUiState()
+                .testWithScheduler {
+                    val emission = awaitItem()
+                    assertEquals(true, emission is CurrencyListPageState.Loading)
+                    awaitComplete()
+                }
+
     }
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun hidesSpinnerAfterLoading() = runTest {
+        val viewModel = mockSuccessfulCase()
+        viewModel.inputs.setCurrencyAmount(105)
+        viewModel.outputs
+            .fetchUiState()
+            .testWithScheduler {
 
+                advanceTimeBy(5000)
+                val emission = awaitItem()
+                assertEquals(true, emission is CurrencyListPageState.Loading)
+                awaitComplete()
+            }
     }
 
     //endregion
 
     // region Test Cases
     private suspend fun mockErrorCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(application, repository)
+        val viewModel = CurrencyListFragmentVM(application,testDispatchers, repository)
         whenever(repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)
         ).thenReturn(flow {
-//            delay(500)
             emit(Result.failure(genericRuntimeException))
         })
         return viewModel
     }
 
     private suspend fun mockSuccessfulCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(application, repository)
+        val viewModel = CurrencyListFragmentVM(application, testDispatchers, repository)
 
         whenever(repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)).thenReturn(flow {
-//            withContext(Dispatchers.IO) { delay(2000) }
             emit(expectedResult)
         })
         return viewModel
