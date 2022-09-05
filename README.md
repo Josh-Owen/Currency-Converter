@@ -11,12 +11,12 @@ improve further upon.
 Technologies used for the task:
 
 - Kotlin 
-- Dependency Injections (Hilt & Modularisation)
+- Dependency Injections (Hilt with Hilt modules)
 - Navigation Components
-- Retrofit
 - Android-X RecyclerView:Selection 
-- Coroutines, Kotlin Flows & LiveData
-- Espresso, Mockito and Junit
+- Coroutines & Kotlin Flows
+- Retrofit & Retrofit Mock Server
+- Espresso, Junit, Barista & Turbine
 
 Here is a showcase of some of the applications features: 
 
@@ -44,11 +44,6 @@ Image showcasing multiple currencies and the price history. <br />
 
 <br />
 <br />
-
-I actually ran out of time to work further on this project, but I am hoping to expand this with the following at a later date:<br />
-
-- Implement a Retrofit Mock Server for UI tests.
-- Finish integrating all of my mock test cases.<br />
 
 And that is all folks! Thank you for stopping by.
 

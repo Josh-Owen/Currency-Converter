@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.base.utils
+package com.joshowen.forexexchangerates.base.utils.fileio
 
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.IOException
