@@ -138,9 +138,8 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isListErrorStatePropagated() = runTest(testDispatchers.io) {
+    fun isListErrorStatePropagated() = runBlocking (testDispatchers.io) {
         val viewModel = mockErrorCase()
 
         viewModel.fetchCurrencyInformation()

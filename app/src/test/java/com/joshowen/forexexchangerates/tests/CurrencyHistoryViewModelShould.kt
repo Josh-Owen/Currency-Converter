@@ -15,7 +15,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -46,9 +45,13 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     private val genericRuntimeException = RuntimeException("Something went wrong.")
 
     private var mockedListOfCurrencyHistory: List<CurrencyHistory> = listOf(
-        CurrencyHistory("2022-09-03", listOf(  Currency(CurrencyType.GREAT_BRITISH_POUNDS, 0.0),
-            Currency(CurrencyType.US_DOLLARS, 1000.0),
-            Currency(CurrencyType.JAPANESE_YEN, 2000.0)))
+        CurrencyHistory(
+            "2022-09-03", listOf(
+                Currency(CurrencyType.GREAT_BRITISH_POUNDS, 0.0),
+                Currency(CurrencyType.US_DOLLARS, 1000.0),
+                Currency(CurrencyType.JAPANESE_YEN, 2000.0)
+            )
+        )
     )
 
     var application: Application = mock()
@@ -61,8 +64,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
 
 
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesDisplayDefaultCurrencyAndUserSpecifiedAmount() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
@@ -71,9 +72,8 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         assertEquals(expectedSpecifiedCurrencyOutput, output)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isListLoadingStatePropagated() = runBlocking (testDispatchers.io) {
+    fun isListLoadingStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
 
         viewModel.inputs.setStartDate(startDate)
@@ -84,57 +84,47 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUIStateFlow().test {
+            awaitItem() // Ignore first emission on our idle state
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isListSuccessfulStatePropagated() = runTest (testDispatchers.io){
+    fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
-
-        viewModel.inputs.setStartDate(startDate)
-        viewModel.inputs.setEndDateRange(endDate)
 
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
+        viewModel.inputs.setStartDate(startDate)
+        viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
 
-
-
         viewModel.outputs.fetchUIStateFlow().test {
+            awaitItem() // Ignore first emission on our idle state
             val emittedValue = awaitItem()
-            assertTrue(emittedValue is CurrencyHistoryPageState.Success)
+            assertTrue(emittedValue is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
-
-
-
-
     }
 
     @Test
-    fun isListErrorStatePropagated() = runBlocking (testDispatchers.io) {
+    fun isListErrorStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockErrorCase()
 
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(defaultCurrency.toString())
-
-
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
-
-
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUIStateFlow().test {
-            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
+            awaitItem() // Ignore first emission on our idle state
+            val emittedItem = awaitItem()
+            assertTrue(emittedItem is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
-
-
 
     // region Test Cases
     private suspend fun mockErrorCase(): CurrencyHistoryFragmentVM {

@@ -76,6 +76,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
 
 
     override suspend fun fetchCurrencyInformation() {
+
         _uiState.value = CurrencyListPageState.Loading
         foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
             .flowOn(dispatchers.io)
