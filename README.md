@@ -39,9 +39,6 @@ Image showcasing a single currency and it's price history.<br />
 
 Image showcasing multiple currencies and the price history. <br />
 
-
-
-
 <br />
 <br />
 

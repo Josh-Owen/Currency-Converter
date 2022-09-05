@@ -2,11 +2,13 @@ package com.joshowen.forexexchangerates.base.test.ui
 
 import android.view.View
 import android.widget.ProgressBar
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.filters.LargeTest
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed
 import com.joshowen.forexexchangerates.R
@@ -23,6 +25,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 
 @HiltAndroidTest
+@LargeTest
 class CurrencyHistoryFragmentTest : BaseUITest() {
 
 
@@ -60,6 +63,13 @@ class CurrencyHistoryFragmentTest : BaseUITest() {
             )
         }
         assertNotDisplayed(R.id.pbLoadingPriceHistory)
+    }
+
+    @Test
+    fun doesBackArrowNavigateBackToHomeScreen() {
+        navigateToCurrencyDetails()
+        Espresso.pressBack()
+        assertDisplayed(R.string.list_of_currencies_page_title)
     }
 
     @Test
