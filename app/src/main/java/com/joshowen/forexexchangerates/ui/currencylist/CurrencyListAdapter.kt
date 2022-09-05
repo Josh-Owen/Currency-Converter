@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshowen.forexexchangerates.databinding.CurrencyListItemBinding
+import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
+import com.joshowen.repository.data.Currency
 import com.joshowen.repository.enums.CurrencyType
 
 //region CurrencyListAdapter
 class CurrencyListAdapter(
     private val listener : (Array<CurrencyType>) -> Unit
-) : ListAdapter<Pair<CurrencyType, String>, CurrencyListAdapter.CurrencyViewHolder>(CurrencyComparator()) {
+) : ListAdapter<Currency, CurrencyListAdapter.CurrencyViewHolder>(CurrencyComparator()) {
 
     //region Variables & Class Members
     var tracker: SelectionTracker<Long>? = null
@@ -53,16 +55,16 @@ class CurrencyListAdapter(
     //endregion
 
     //region DiffUtil.ItemCallback
-    class CurrencyComparator : DiffUtil.ItemCallback<Pair<CurrencyType, String>>() {
+    class CurrencyComparator : DiffUtil.ItemCallback<Currency>() {
         override fun areItemsTheSame(
-            oldItem: Pair<CurrencyType, String>,
-            newItem: Pair<CurrencyType, String>
+            oldItem: Currency,
+            newItem: Currency
         ) =
-            oldItem.first == newItem.first
+            oldItem.currency == newItem.currency
 
         override fun areContentsTheSame(
-            oldItem: Pair<CurrencyType, String>,
-            newItem: Pair<CurrencyType, String>
+            oldItem: Currency,
+            newItem: Currency
         ) =
             oldItem == newItem
     }
@@ -80,12 +82,12 @@ class CurrencyListAdapter(
         private var currencyType: CurrencyType? = null
         //endregion
 
-        fun bind(priceInformation: Pair<CurrencyType, String>, isSelected: Boolean) {
-            this.currencyType = priceInformation.first
+        fun bind(priceInformation: Currency, isSelected: Boolean) {
+            this.currencyType = priceInformation.currency
             itemView.isSelected = isSelected
             cbIsSelected.visibility = if (isSelected) View.VISIBLE else View.GONE
-            tvName.text = priceInformation.first.currencyCode
-            tvCategory.text = priceInformation.second
+            tvName.text = priceInformation.currency.currencyCode
+            tvCategory.text = priceInformation.price?.roundToTwoDecimalPlaces()
             clParent.setOnClickListener(this)
         }
 

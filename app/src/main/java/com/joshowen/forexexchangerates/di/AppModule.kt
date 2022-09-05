@@ -1,7 +1,7 @@
 package com.joshowen.forexexchangerates.di
 
-import com.joshowen.forexexchangerates.DefaultDispatchers
-import com.joshowen.forexexchangerates.DispatchersProvider
+import com.joshowen.forexexchangerates.dispatchers.DefaultDispatchers
+import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.repository.repository.ForeignExchangeRepository
 import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
 

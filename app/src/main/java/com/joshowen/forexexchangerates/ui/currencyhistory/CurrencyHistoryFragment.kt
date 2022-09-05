@@ -15,6 +15,7 @@ import com.joshowen.forexexchangerates.databinding.FragmentCurrencyHistoryBindin
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.threeten.bp.LocalDate
 
 @AndroidEntryPoint
 class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
@@ -46,10 +47,12 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
             viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
             viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
-
+            viewModel.inputs.setStartDate(LocalDate.now().minusDays(5))
+            viewModel.inputs.setEndDateRange(LocalDate.now())
+            viewModel.fetchPriceHistory()
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.fetchPriceHistory()
+
 
                 viewModel.outputs.fetchSpecifiedCurrencyAmount().collectLatest{
                     binding.tvCurrencyAndAmount.text = it

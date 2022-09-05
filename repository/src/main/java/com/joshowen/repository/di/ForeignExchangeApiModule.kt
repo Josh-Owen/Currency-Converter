@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,11 +20,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object FXExchangeModule {
+open class FXExchangeModule {
 
-    //region variables
-    private const val BASE_URL = "https://api.apilayer.com/fixer/"
-    //endregion
+    protected open fun baseUrl() = "https://api.apilayer.com/fixer/".toHttpUrl()
 
     @Provides
     @Singleton
@@ -78,7 +77,7 @@ internal object FXExchangeModule {
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()

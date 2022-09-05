@@ -33,7 +33,7 @@ class ForeignExchangeRepositoryImpl @Inject internal constructor(private val for
         }
     }
 
-    override fun getPricedHistory(
+    override fun getPriceHistory(
         baseCurrency: CurrencyType,
         selectedCurrencyCodes: String,
         startDate: LocalDate,

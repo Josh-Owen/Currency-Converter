@@ -1,20 +1,30 @@
 package com.joshowen.forexexchangerates.test
 
 import android.app.Application
-import com.joshowen.forexexchangerates.TestDispatchers
+import android.util.Log
+import app.cash.turbine.test
+import app.cash.turbine.testIn
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
+import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
+import com.joshowen.repository.data.Currency
 import com.joshowen.repository.data.CurrencyHistory
 import com.joshowen.repository.enums.CurrencyType
 import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
+import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
@@ -27,6 +37,12 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     private val defaultCurrency = CurrencyType.EUROS
 
     private val selectedCurrencies = listOf(
+        CurrencyType.US_DOLLARS,
+        CurrencyType.JAPANESE_YEN,
+        CurrencyType.GREAT_BRITISH_POUNDS,
+    )
+
+    private val selectedCurrenciesString = listOf(
         CurrencyType.US_DOLLARS.currencyCode,
         CurrencyType.JAPANESE_YEN.currencyCode,
         CurrencyType.GREAT_BRITISH_POUNDS.currencyCode,
@@ -37,7 +53,11 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     private val genericRuntimeException = RuntimeException("Something went wrong.")
 
-    var mockedListOfCurrencyHistory: List<CurrencyHistory> = mock()
+    private var mockedListOfCurrencyHistory: List<CurrencyHistory> = listOf(
+        CurrencyHistory("2022-09-03", listOf(  Currency(CurrencyType.GREAT_BRITISH_POUNDS, 0.0),
+            Currency(CurrencyType.US_DOLLARS, 1000.0),
+            Currency(CurrencyType.JAPANESE_YEN, 2000.0)))
+    )
 
     var application: Application = mock()
 
@@ -49,26 +69,10 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
 
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun doesShowSpinnerWhilstLoading() = runTest {
-        val viewModel = mockSuccessfulCase()
-        viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-        viewModel.inputs.setSupportedCurrencies(listOf(CurrencyType.JAPANESE_YEN))
-        viewModel.fetchPriceHistory()
-        val state = viewModel.outputs.fetchUiState().last() is CurrencyHistoryPageState.Loading
-        assertEquals(true, state)
-    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun doesHideSpinnerAfterLoading() = runTest {
-
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun displaysCorrectUserInputCurrencyFormat() = runTest {
+    fun doesDisplayDefaultCurrencyAndUserSpecifiedAmount() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         val output = viewModel.outputs.fetchSpecifiedCurrencyAmount().last()
@@ -77,22 +81,70 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun doesFetchCurrencyInformationForIntendedCurrencies() = runTest {
+    fun isListLoadingStatePropagated() = runTest (testDispatchers.io) {
+        val viewModel = mockSuccessfulCase()
+        viewModel.inputs.fetchPriceHistory()
 
+        viewModel.outputs.fetchUIStateFlow().test {
+            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isGenericNetworkErrorPropagatedFromRepository() = runTest {
+    fun isListSuccessfulStatePropagated() = runTest (testDispatchers.io){
+        val viewModel = mockSuccessfulCase()
+
+        viewModel.inputs.setStartDate(startDate)
+        viewModel.inputs.setEndDateRange(endDate)
+
+        viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
+        viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
+        viewModel.inputs.fetchPriceHistory()
+
+
+
+        viewModel.outputs.fetchUIStateFlow().test {
+            val emittedValue = awaitItem()
+            assertTrue(emittedValue is CurrencyHistoryPageState.Success)
+            cancelAndConsumeRemainingEvents()
+        }
+
+
+
 
     }
 
+    @Test
+    fun isListErrorStatePropagated() = runBlocking (testDispatchers.io) {
+        val viewModel = mockErrorCase()
+
+        viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
+        viewModel.inputs.setSpecifiedCurrencyAmount(defaultCurrency.toString())
+
+
+        viewModel.inputs.setStartDate(startDate)
+        viewModel.inputs.setEndDateRange(endDate)
+
+
+        viewModel.inputs.fetchPriceHistory()
+
+        viewModel.outputs.fetchUIStateFlow().test {
+            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+
+
     // region Test Cases
     private suspend fun mockErrorCase(): CurrencyHistoryFragmentVM {
+        val viewModel = CurrencyHistoryFragmentVM(application, testDispatchers, repository)
         whenever(
-            repository.getPricedHistory(
+            repository.getPriceHistory(
                 defaultCurrency,
-                selectedCurrencies,
+                selectedCurrenciesString,
                 startDate,
                 endDate
             )
@@ -100,14 +152,15 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
             flow {
                 emit(Result.failure(genericRuntimeException))
             })
-        return CurrencyHistoryFragmentVM(application, testDispatchers, repository)
+        return viewModel
     }
 
     private suspend fun mockSuccessfulCase(): CurrencyHistoryFragmentVM {
+        val viewModel = CurrencyHistoryFragmentVM(application, testDispatchers, repository)
         whenever(
-            repository.getPricedHistory(
+            repository.getPriceHistory(
                 defaultCurrency,
-                selectedCurrencies,
+                selectedCurrenciesString,
                 startDate,
                 endDate
             )
@@ -115,7 +168,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
             flow {
                 emit(expectedResponse)
             })
-        return CurrencyHistoryFragmentVM(application, testDispatchers, repository)
+        return viewModel
     }
     //endregion
 }

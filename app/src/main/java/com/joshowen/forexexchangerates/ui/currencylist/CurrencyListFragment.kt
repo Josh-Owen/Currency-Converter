@@ -45,6 +45,9 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
     override fun initViews() {
         super.initViews()
+
+
+
         binding.rvExchangeRates.apply {
             this.adapter = currencyAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
@@ -121,6 +124,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         }
 
         lifecycleScope.launch {
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 viewModel.outputs.fetchDefaultApplicationCurrency().collectLatest {
@@ -130,7 +134,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                 viewModel.outputs.fetchUiState().collectLatest {
                     binding.pbLoadCurrency.visibility =
                         if (it is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
-
                     if (it is CurrencyListPageState.Success) {
                         currencyAdapter.submitList(it.data)
                     } else if (it is CurrencyListPageState.Error) {
@@ -184,7 +187,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
                 val selected = currencyAdapter.currentList.getSelectedItems(
                     tracker?.selection?.toList() ?: listOf()
-                ).map { it.first }.toTypedArray()
+                ).map { it.currency }.toTypedArray()
 
                 navigateToCurrencyHistoryPage(selected)
 

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-enum class CurrencyType(val currencyCode : String) :Parcelable{
+enum class CurrencyType(val currencyCode : String) : Parcelable{
     EUROS("EUR"),
     US_DOLLARS("USD"),
     JAPANESE_YEN("JPY"),

@@ -91,7 +91,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun isFetchPriceHistoryFromAPIServiceExecuted() = runTest {
         val repository = fetchCurrencyHistoryInformationSuccess()
-        repository.getPricedHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
+        repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         verify(api, times(1)).fetchHistoricPricesForSymbol(
             startDate,
@@ -107,7 +107,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         val repository = fetchCurrencyHistoryInformationException()
         assertEquals(
             genericRuntimeException.message,
-            repository.getPricedHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
+            repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
                 .first()
                 .exceptionOrNull()?.message
         )
@@ -117,7 +117,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun doesFetchPriceHistoryDelegateMappingToMapper() = runTest {
         val repository = fetchCurrencyHistoryInformationSuccess()
-        repository.getPricedHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
+        repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         Mockito.verify(historicExchangeMapper, times(1)).invoke(dateAndExchangeRatePair)
     }

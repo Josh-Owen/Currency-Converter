@@ -8,5 +8,5 @@ import org.threeten.bp.LocalDate
 
 interface ForeignExchangeRepository {
     fun getCurrencyInformation(baseCurrency : CurrencyType, supportedCurrencyCodes : String) : Flow<Result<List<Currency>>>
-    fun getPricedHistory(baseCurrency : CurrencyType, selectedCurrencyCodes : String, startDate : LocalDate, endDate : LocalDate): Flow<Result<List<CurrencyHistory>>>
+    fun getPriceHistory(baseCurrency : CurrencyType, selectedCurrencyCodes : String, startDate : LocalDate, endDate : LocalDate): Flow<Result<List<CurrencyHistory>>>
 }

@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshowen.repository.retrofit.responses.current.ExchangeRateItemRawResponse
 import java.util.*
 
-internal data class FetchHistoricTimeSeriesResult (
+data class FetchHistoricTimeSeriesResult (
     @SerializedName("base")
     val base: String?,
     @SerializedName("date")

@@ -1,9 +1,8 @@
 package com.joshowen.forexexchangerates
 
+import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import javax.inject.Singleton
 

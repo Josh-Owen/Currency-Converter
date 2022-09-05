@@ -2,13 +2,12 @@ package com.joshowen.forexexchangerates.ui.currencylist
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.joshowen.forexexchangerates.DispatchersProvider
+import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
-import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
 import com.joshowen.repository.data.Currency
 import com.joshowen.repository.repository.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +26,7 @@ interface CurrentListFragmentVMOutputs {
     fun fetchUiState() : Flow<CurrencyListPageState>
     fun fetchDefaultApplicationCurrency() : Flow<String>
     fun fetchSpecifiedAmount() : Flow<Int>
+    fun fetchUIStateFlow() : MutableStateFlow<CurrencyListPageState>
 }
 //endregion
 
@@ -42,10 +42,11 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
     private val exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
     private val exchangeRatesFlow = exchangeRates.asStateFlow()
     private val _uiState =
-        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Success(emptyList()))
+        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Loading)
     private val uiState: Flow<CurrencyListPageState> = _uiState
 
     //endregion
+
 
     init {
 
@@ -54,14 +55,14 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
             amountToConvertFlow
                 .combine(exchangeRatesFlow) { amountToConvert, selectedCurrenciesExchangeRates ->
                     val updatedValues = selectedCurrenciesExchangeRates.map { currentSymbol ->
-                        Pair(
+                        Currency(
                             currentSymbol.currency,
                             (amountToConvert * (currentSymbol.price ?: 0.0))
-                                .roundToTwoDecimalPlaces()
                         )
                     }
                     updatedValues
                 }
+                .flowOn(dispatchers.io)
                 .onEach { _uiState.value = CurrencyListPageState.Success(it) }
                 .collect()
         }
@@ -71,6 +72,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
     override fun setCurrencyAmount(amount: Int) {
         amountToConvert.value = amount
     }
+
     //endregion
 
     //region Outputs
@@ -88,11 +90,13 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
         return amountToConvertFlow
     }
 
+    override fun fetchUIStateFlow(): MutableStateFlow<CurrencyListPageState> {
+        return _uiState
+    }
+
     //endregion
 
     private suspend fun fetchCurrencyInformation() {
-
-        _uiState.value = CurrencyListPageState.Loading
 
         foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
             .flowOn(dispatchers.io)

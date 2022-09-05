@@ -6,7 +6,7 @@ import org.threeten.bp.LocalDate
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-internal interface ForeignExchangeAPI {
+interface ForeignExchangeAPI {
 
     @GET("latest")
     suspend fun fetchLatestPricesForSymbols(@Query("symbols") supportedCurrencyCodes : String, @Query("base") baseCurrencyCode : String) : ExchangeRateResponse

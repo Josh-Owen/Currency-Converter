@@ -57,7 +57,10 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
     }
 
     override fun getItemCount(): Int {
-        return if(currentList.size <= 0) 0 else currentList.size + 1
+        return if (currentList.size == 0)
+            0
+        else
+            currentList.size + 1
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -66,9 +69,14 @@ class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<Currenc
                 holder.bind(getItem(position))
             }
             is CurrencyHistoryViewHolder -> {
-                holder.bind(getItem(
-                    if((position - 1) > 0)
-                        position - 1 else position)
+                holder.bind(
+                    getItem(
+                        if(position - 1 <= 0)
+                            0
+                                    else
+                        position - 1
+
+                    )
                 )
             }
         }
