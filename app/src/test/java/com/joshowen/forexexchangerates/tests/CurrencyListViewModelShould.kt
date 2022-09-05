@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.test
+package com.joshowen.forexexchangerates.tests
 
 import android.app.Application
 import app.cash.turbine.test
@@ -16,10 +16,7 @@ import kotlinx.coroutines.test.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import java.lang.RuntimeException
 
 @RunWith(MockitoJUnitRunner::class)
@@ -67,9 +64,9 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         Currency(CurrencyType.NEW_ZEALAND_DOLLARS, 9000.0)
     )
 
-    var expectedResult = Result.success(originalCurrencyValues)
+    private var expectedResult = Result.success(originalCurrencyValues)
 
-    var application: Application = mock()
+    private var application: Application = mock()
 
     private val supportedCurrencies = listOf(
         CurrencyType.EUROS.currencyCode,
@@ -89,6 +86,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     private val defaultCurrency = CurrencyType.EUROS
 
     private val defaultCurrencyValue = 100
+    private val updatedCurrencyValue = 1000
 
     //endregion
 
@@ -104,7 +102,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesUpdatingCurrencyFieldUpdateViewModelState() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
@@ -118,7 +115,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun isListLoadingStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
-       // viewModel.fetchCurrencyInformation()
+        viewModel.fetchCurrencyInformation()
         viewModel.outputs.fetchUIStateFlow().test {
             assertTrue(awaitItem() is CurrencyListPageState.Loading)
             cancelAndConsumeRemainingEvents()
@@ -127,13 +124,14 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isListSuccessfulStatePropagated() = runTest(testDispatchers.io) {
+    fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
 
         viewModel.inputs.setCurrencyAmount(defaultCurrencyValue)
-       // viewModel.inputs.fetchCurrencyInformation()
+        viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
+            awaitItem() // Ignore our initial state Idle state
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == transformedCurrencyValues)
             cancelAndConsumeRemainingEvents()
@@ -145,7 +143,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     fun isListErrorStatePropagated() = runTest(testDispatchers.io) {
         val viewModel = mockErrorCase()
 
-      //  viewModel.fetchCurrencyInformation()
+        viewModel.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
             assertTrue(awaitItem() is CurrencyListPageState.Error)
@@ -153,34 +151,18 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         }
     }
 
-
     @Test
-    fun isFetchLatestCurrencyPricesInvoked() = runBlocking(testDispatchers.io) {
+    fun doesUpdatingSpecifiedCurrencyUpdateCurrencyPrices() = runBlocking (testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
 
-    //    viewModel.fetchCurrencyInformation()
+        viewModel.inputs.setCurrencyAmount(updatedCurrencyValue)
+
+        viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
-            verify(repository, times(1)).getCurrencyInformation(
-                defaultCurrency,
-                supportedCurrencies
-            )
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun doesUpdatingSpecifiedCurrencyUpdateCurrencyPrices() = runTest(testDispatchers.io) {
-        val viewModel = mockSuccessfulCase()
-
-        viewModel.inputs.setCurrencyAmount(defaultCurrencyValue)
-    //    viewModel.inputs.fetchCurrencyInformation()
-
-        viewModel.inputs.setCurrencyAmount(1000)
-
-        viewModel.outputs.fetchUIStateFlow().test {
+            awaitItem() // Ignore our initial state Idle state
             val emittedValue = awaitItem()
+            expectedResult
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == updatedCurrencyValues)
             cancelAndConsumeRemainingEvents()
         }

@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.test.mappers
+package com.joshowen.forexexchangerates.tests.mappers
 
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.data.Currency

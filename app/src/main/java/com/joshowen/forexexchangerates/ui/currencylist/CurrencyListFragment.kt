@@ -124,9 +124,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         }
 
         lifecycleScope.launch {
-
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 viewModel.outputs.fetchDefaultApplicationCurrency().collectLatest {
                     binding.tvDefaultCurrencyTitle.text = it
                 }

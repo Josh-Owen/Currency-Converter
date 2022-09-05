@@ -41,7 +41,7 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     private val _historyStartDateRange = MutableStateFlow(LocalDate.now().minusDays(5))
     private val _historyEndDateRange = MutableStateFlow(LocalDate.now())
 
-    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
+    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Idle)
     private val uiState: Flow<CurrencyHistoryPageState> = _uiState
 
     private val appConfigDefaultCurrency = flow {
@@ -60,8 +60,11 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     }
 
     override suspend fun fetchPriceHistory() {
+
         val selectedCurrencies =
             _userSelectedCurrencies.value.joinToString(",") { it.currencyCode }
+
+        _uiState.value = CurrencyHistoryPageState.Loading
 
         foreignExchangeRepo.getPriceHistory(
             DEFAULT_APP_CURRENCY, selectedCurrencies,

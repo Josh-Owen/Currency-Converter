@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates
+package com.joshowen.forexexchangerates.dispatchers
 
 import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.scope
+package com.joshowen.forexexchangerates.rules
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

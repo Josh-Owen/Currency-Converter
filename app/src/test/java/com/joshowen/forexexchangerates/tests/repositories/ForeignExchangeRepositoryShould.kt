@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.test.repositories
+package com.joshowen.forexexchangerates.tests.repositories
 
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.data.CurrencyType

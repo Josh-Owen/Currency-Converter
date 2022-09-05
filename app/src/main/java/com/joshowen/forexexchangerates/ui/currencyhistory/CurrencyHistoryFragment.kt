@@ -44,19 +44,17 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
     override fun observeViewModel() {
 
         lifecycleScope.launch {
-
             viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
             viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
             viewModel.inputs.setStartDate(LocalDate.now().minusDays(5))
             viewModel.inputs.setEndDateRange(LocalDate.now())
-            viewModel.fetchPriceHistory()
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-
 
                 viewModel.outputs.fetchSpecifiedCurrencyAmount().collectLatest{
                     binding.tvCurrencyAndAmount.text = it
                 }
+
+                viewModel.fetchPriceHistory()
 
                 viewModel.fetchUiState().collectLatest {
 

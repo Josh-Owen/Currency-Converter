@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.test
+package com.joshowen.forexexchangerates.tests
 
 import android.app.Application
 import app.cash.turbine.test
@@ -73,8 +73,14 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun isListLoadingStatePropagated() = runTest (testDispatchers.io) {
+    fun isListLoadingStatePropagated() = runBlocking (testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
+
+        viewModel.inputs.setStartDate(startDate)
+        viewModel.inputs.setEndDateRange(endDate)
+
+        viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
+        viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUIStateFlow().test {

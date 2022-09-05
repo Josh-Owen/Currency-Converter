@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.base.test.ui
+package com.joshowen.forexexchangerates.base.tests.ui
 
 import android.view.View
 import android.widget.ProgressBar
