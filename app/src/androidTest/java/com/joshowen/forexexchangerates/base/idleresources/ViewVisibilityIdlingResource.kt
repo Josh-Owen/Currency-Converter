@@ -13,7 +13,7 @@ class ViewVisibilityIdlingResource(
 
     override fun getName(): String {
         return ViewVisibilityIdlingResource::class.java.name +
-                ":" + view.id + ":" + expectedVisibility
+                ":" + view.id.hashCode() + ":" + expectedVisibility.hashCode()
     }
 
     override fun isIdleNow(): Boolean {

@@ -15,8 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
-import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.forexexchangerates.ext.getSelectedItems
+import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.extensions.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -124,9 +124,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         }
 
         lifecycleScope.launch {
-
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 viewModel.outputs.fetchDefaultApplicationCurrency().collectLatest {
                     binding.tvDefaultCurrencyTitle.text = it
                 }

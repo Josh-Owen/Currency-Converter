@@ -8,8 +8,8 @@ import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
-import com.joshowen.repository.data.Currency
-import com.joshowen.repository.repository.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.data.Currency
+import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,6 +18,7 @@ import javax.inject.Inject
 //region CurrentListFragmentVMInputs
 interface CurrentListFragmentVMInputs {
     fun setCurrencyAmount(amount : Int)
+    suspend fun fetchCurrencyInformation()
 }
 //endregion
 
@@ -42,7 +43,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
     private val exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
     private val exchangeRatesFlow = exchangeRates.asStateFlow()
     private val _uiState =
-        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Loading)
+        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Idle)
     private val uiState: Flow<CurrencyListPageState> = _uiState
 
     //endregion
@@ -73,6 +74,32 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
         amountToConvert.value = amount
     }
 
+
+    override suspend fun fetchCurrencyInformation() {
+
+        _uiState.value = CurrencyListPageState.Loading
+        foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
+            .flowOn(dispatchers.io)
+            .collectLatest {
+                try {
+                    if (it.isSuccess) {
+                        exchangeRates.value = it.getOrNull() ?: listOf()
+                    } else {
+                        _uiState.value = CurrencyListPageState.Error(
+                            getApplication<Application>().getString(
+                                R.string.generic_network_error
+                            )
+                        )
+                    }
+                } catch (exception: Exception) {
+                    _uiState.value =
+                        CurrencyListPageState.Error(
+                            exception.message.toString()
+                        )
+                }
+            }
+    }
+
     //endregion
 
     //region Outputs
@@ -95,28 +122,4 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
     }
 
     //endregion
-
-    private suspend fun fetchCurrencyInformation() {
-
-        foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
-            .flowOn(dispatchers.io)
-            .collectLatest {
-                try {
-                    if (it.isSuccess) {
-                        exchangeRates.value = it.getOrNull() ?: listOf()
-                    } else {
-                        _uiState.value = CurrencyListPageState.Error(
-                            getApplication<Application>().getString(
-                                R.string.generic_network_error
-                            )
-                        )
-                    }
-                } catch (exception: Exception) {
-                    _uiState.value =
-                        CurrencyListPageState.Error(
-                            exception.message.toString()
-                        )
-                }
-            }
-    }
 }

@@ -1,20 +1,22 @@
 package com.joshowen.forexexchangerates.ui.currencyhistory
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
-import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.repository.repository.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 //region Interfaces
 interface CurrencyHistoryFragmentVMInputs {
-    fun setSupportedCurrencies(currencies : List<CurrencyType>)
+    fun setSupportedCurrencies(currencies: List<CurrencyType>)
     fun setSpecifiedCurrencyAmount(amount : String)
     fun setStartDate(startDate : LocalDate)
     fun setEndDateRange(endDate : LocalDate)
@@ -41,7 +43,7 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     private val _historyStartDateRange = MutableStateFlow(LocalDate.now().minusDays(5))
     private val _historyEndDateRange = MutableStateFlow(LocalDate.now())
 
-    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
+    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Idle)
     private val uiState: Flow<CurrencyHistoryPageState> = _uiState
 
     private val appConfigDefaultCurrency = flow {
@@ -60,33 +62,38 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     }
 
     override suspend fun fetchPriceHistory() {
-        val selectedCurrencies =
-            _userSelectedCurrencies.value.joinToString(",") { it.currencyCode }
 
-        foreignExchangeRepo.getPriceHistory(
-            DEFAULT_APP_CURRENCY, selectedCurrencies,
-            _historyStartDateRange.value, _historyEndDateRange.value
-        ).flowOn(dispatchers.io)
-            .collectLatest {
-                try {
-                    if (it.isSuccess) {
-                        _uiState.value =
-                            CurrencyHistoryPageState.Success(it.getOrNull() ?: listOf())
-                    } else {
+        viewModelScope.launch(dispatchers.io) {
+            val selectedCurrencies =
+                _userSelectedCurrencies.value.joinToString(",") { it.currencyCode }
+
+            _uiState.value = CurrencyHistoryPageState.Loading
+
+            foreignExchangeRepo.getPriceHistory(
+                DEFAULT_APP_CURRENCY, selectedCurrencies,
+                _historyStartDateRange.value, _historyEndDateRange.value
+            ).flowOn(dispatchers.io)
+                .collect {
+                    try {
+                        if (it.isSuccess) {
+                            _uiState.value =
+                                CurrencyHistoryPageState.Success(it.getOrNull() ?: listOf())
+                        } else {
+                            _uiState.value =
+                                CurrencyHistoryPageState.Error(
+                                    getApplication<Application>().getString(
+                                        R.string.generic_network_error
+                                    )
+                                )
+                        }
+                    } catch (exception: Exception) {
                         _uiState.value =
                             CurrencyHistoryPageState.Error(
-                                getApplication<Application>().getString(
-                                    R.string.generic_network_error
-                                )
+                                exception.message.toString()
                             )
                     }
-                } catch (exception: Exception) {
-                    _uiState.value =
-                        CurrencyHistoryPageState.Error(
-                            exception.message.toString()
-                        )
                 }
-            }
+        }
     }
 
     override fun setStartDate(startDate: LocalDate) {
