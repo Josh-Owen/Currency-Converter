@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.databinding.HistoricListItemBinding
 import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
-import com.joshowen.forexexchangerates.ext.display
-import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
-import com.joshowen.repository.data.CurrencyHistory
-import com.joshowen.repository.enums.CurrencyType
+import com.joshowen.forexexchangerates.extensions.display
+import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
+import com.joshowen.forexexchangerates.data.CurrencyHistory
+import com.joshowen.forexexchangerates.data.CurrencyType
 
-class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
+internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
 
     //region Companion Object
     companion object {

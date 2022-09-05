@@ -5,8 +5,8 @@ import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
-import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.repository.repository.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import org.threeten.bp.LocalDate
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 //region Interfaces
 interface CurrencyHistoryFragmentVMInputs {
-    fun setSupportedCurrencies(currencies : List<CurrencyType>)
+    fun setSupportedCurrencies(currencies: List<CurrencyType>)
     fun setSpecifiedCurrencyAmount(amount : String)
     fun setStartDate(startDate : LocalDate)
     fun setEndDateRange(endDate : LocalDate)

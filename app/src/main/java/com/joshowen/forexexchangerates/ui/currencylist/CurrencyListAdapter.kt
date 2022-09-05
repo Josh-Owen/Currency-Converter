@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshowen.forexexchangerates.databinding.CurrencyListItemBinding
-import com.joshowen.forexexchangerates.ext.roundToTwoDecimalPlaces
-import com.joshowen.repository.data.Currency
-import com.joshowen.repository.enums.CurrencyType
+import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
+import com.joshowen.forexexchangerates.data.Currency
+import com.joshowen.forexexchangerates.data.CurrencyType
 
 //region CurrencyListAdapter
 class CurrencyListAdapter(

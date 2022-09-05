@@ -1,6 +1,6 @@
 package com.joshowen.forexexchangerates.base.di
 
-import com.joshowen.repository.di.FXExchangeModule
+import com.joshowen.forexexchangerates.di.FXExchangeModule
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn

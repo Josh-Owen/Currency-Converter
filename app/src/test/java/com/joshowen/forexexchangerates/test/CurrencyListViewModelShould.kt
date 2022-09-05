@@ -5,9 +5,9 @@ import app.cash.turbine.test
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
-import com.joshowen.repository.data.Currency
-import com.joshowen.repository.enums.CurrencyType
-import com.joshowen.repository.repository.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.data.Currency
+import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.*

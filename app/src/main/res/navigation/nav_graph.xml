@@ -24,6 +24,6 @@
             app:nullable="false"/>
         <argument
             android:name="selectedCurrencies"
-            app:argType="com.joshowen.repository.enums.CurrencyType[]" />
+            app:argType="com.joshowen.forexexchangerates.data.CurrencyType[]" />
     </fragment>
 </navigation>

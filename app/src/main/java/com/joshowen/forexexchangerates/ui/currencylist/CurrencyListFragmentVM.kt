@@ -8,8 +8,8 @@ import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
-import com.joshowen.repository.data.Currency
-import com.joshowen.repository.repository.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.data.Currency
+import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

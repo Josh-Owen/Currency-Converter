@@ -1,6 +1,6 @@
 package com.joshowen.forexexchangerates.ui.currencyhistory
 
-import com.joshowen.repository.data.CurrencyHistory
+import com.joshowen.forexexchangerates.data.CurrencyHistory
 
 sealed class CurrencyHistoryPageState() {
     data class Success(val data: List<CurrencyHistory>) : CurrencyHistoryPageState()
