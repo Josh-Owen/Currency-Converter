@@ -16,7 +16,7 @@ import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUN
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.base.BaseUITest
 import com.joshowen.forexexchangerates.base.idleresources.ViewVisibilityIdlingResource
-import com.joshowen.forexexchangerates.base.utils.nthChildOf
+import com.joshowen.forexexchangerates.base.utils.views.nthChildOf
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.core.AllOf.allOf

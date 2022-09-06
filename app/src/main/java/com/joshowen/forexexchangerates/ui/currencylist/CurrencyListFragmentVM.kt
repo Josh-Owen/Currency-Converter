@@ -41,7 +41,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
 
     private val _specifiedConversionAmount = MutableStateFlow(DEFAULT_APPLICATION_CONVERSION_AMOUNT)
     private val _exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
-    private val _uiState = MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Idle)
+    private val _uiState = MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Loading)
     private val uiState: Flow<CurrencyListPageState> = _uiState
 
     //endregion

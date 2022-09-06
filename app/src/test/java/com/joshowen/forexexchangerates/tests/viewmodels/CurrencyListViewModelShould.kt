@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.tests
+package com.joshowen.forexexchangerates.tests.viewmodels
 
 import android.app.Application
 import app.cash.turbine.test
@@ -122,7 +122,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
@@ -159,9 +158,8 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
-            awaitItem() // Ignore our initial state Idle state
+            awaitItem()
             val emittedValue = awaitItem()
-            expectedResult
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == updatedCurrencyValues)
             cancelAndConsumeRemainingEvents()
         }

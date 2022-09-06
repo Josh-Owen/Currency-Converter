@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.tests
+package com.joshowen.forexexchangerates.tests.viewmodels
 
 import android.app.Application
 import app.cash.turbine.test
@@ -11,8 +11,6 @@ import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmen
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
@@ -84,7 +82,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
-            awaitItem() // Ignore first emission on our idle state
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
@@ -101,9 +98,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
-            awaitItem() // Ignore first emission on our idle state
-            val emittedItem = awaitItem()
-            assertTrue(emittedItem is CurrencyHistoryPageState.Loading)
+            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -119,9 +114,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
-            awaitItem() // Ignore first emission on our idle state
-            val emittedItem = awaitItem()
-            assertTrue(emittedItem is CurrencyHistoryPageState.Loading)
+            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }

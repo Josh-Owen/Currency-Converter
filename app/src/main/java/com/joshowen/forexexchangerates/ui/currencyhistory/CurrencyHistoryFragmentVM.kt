@@ -43,7 +43,7 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     private val _historyStartDateRange = MutableStateFlow(LocalDate.now().minusDays(5))
     private val _historyEndDateRange = MutableStateFlow(LocalDate.now())
 
-    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Idle)
+    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
     private val uiState: Flow<CurrencyHistoryPageState> = _uiState
 
     private val appConfigDefaultCurrency = flow {

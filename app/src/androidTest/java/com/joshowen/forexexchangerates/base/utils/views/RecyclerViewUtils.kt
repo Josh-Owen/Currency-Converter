@@ -1,4 +1,4 @@
-package com.joshowen.forexexchangerates.base.utils
+package com.joshowen.forexexchangerates.base.utils.views
 
 import android.view.View
 import android.view.ViewGroup

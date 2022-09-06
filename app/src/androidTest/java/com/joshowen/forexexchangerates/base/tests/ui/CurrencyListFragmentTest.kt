@@ -17,7 +17,7 @@ import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.base.BaseUITest
 import com.joshowen.forexexchangerates.base.dispatchers.ErrorDispatcher
 import com.joshowen.forexexchangerates.base.idleresources.ViewVisibilityIdlingResource
-import com.joshowen.forexexchangerates.base.utils.nthChildOf
+import com.joshowen.forexexchangerates.base.utils.views.nthChildOf
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.hamcrest.core.AllOf.allOf
@@ -92,6 +92,7 @@ class CurrencyListFragmentTest : BaseUITest() {
     @Test
     fun doesDisplaySnackBarOnNetworkError() {
         mockWebServer.dispatcher = ErrorDispatcher()
+
         mActivityRule.scenario.onActivity {
             IdlingRegistry.getInstance().register(
                 ViewVisibilityIdlingResource(
@@ -100,7 +101,9 @@ class CurrencyListFragmentTest : BaseUITest() {
                 )
             )
         }
-      //  assertDisplayed(R.string.generic_network_error)
+
+//        onView(withText(R.string.generic_network_error))
+//            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     }
 
     @Test
@@ -188,6 +191,11 @@ class CurrencyListFragmentTest : BaseUITest() {
 
     @Test
     fun doesUpdatingSpecifiedCurrencyUpdateConversionValues() {
+        // Blocked by bug in SelectionTracker library: https://github.com/android/android-test/issues/1382
+    }
+
+    @Test
+    fun doesCurrencyAmountGetDisabledUponSelection() {
         // Blocked by bug in SelectionTracker library: https://github.com/android/android-test/issues/1382
     }
 
