@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshowen.forexexchangerates.R
+import com.joshowen.forexexchangerates.data.CurrencyHistory
+import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.databinding.HistoricListItemBinding
 import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
 import com.joshowen.forexexchangerates.extensions.display
 import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
-import com.joshowen.forexexchangerates.data.CurrencyHistory
-import com.joshowen.forexexchangerates.data.CurrencyType
 
 internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
 

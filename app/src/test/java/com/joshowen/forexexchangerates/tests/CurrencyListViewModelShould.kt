@@ -3,21 +3,21 @@ package com.joshowen.forexexchangerates.tests
 import android.app.Application
 import app.cash.turbine.test
 import com.joshowen.forexexchangerates.base.BaseUnitTest
-import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
-import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
+import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.*
-import java.lang.RuntimeException
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class CurrencyListViewModelShould : BaseUnitTest() {
@@ -95,7 +95,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun doesEmitDefaultApplicationCurrency() = runBlocking(testDispatchers.main) {
         val viewModel = mockSuccessfulCase()
-        viewModel.outputs.fetchDefaultApplicationCurrency().test {
+        viewModel.outputs.fetchDefaultApplicationCurrencyFlow().test {
             val emission = awaitItem()
             assertEquals(defaultCurrency.currencyCode, emission)
             cancelAndConsumeRemainingEvents()
@@ -105,10 +105,10 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun doesUpdatingCurrencyFieldUpdateViewModelState() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
-        val priorToUpdatingAmount = viewModel.amountToConvert.value
+        val priorToUpdatingAmount = viewModel.outputs.fetchSpecifiedAmountOfCurrency()
         assertEquals(defaultCurrencyValue, priorToUpdatingAmount)
         viewModel.inputs.setCurrencyAmount(200)
-        val updatedAmount = viewModel.amountToConvert.value
+        val updatedAmount = viewModel.fetchSpecifiedAmountOfCurrency()
         assertEquals(updatedAmount, 200)
     }
 

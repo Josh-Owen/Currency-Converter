@@ -3,15 +3,16 @@ package com.joshowen.forexexchangerates.tests
 import android.app.Application
 import app.cash.turbine.test
 import com.joshowen.forexexchangerates.base.BaseUnitTest
-import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
-import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyHistory
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
+import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
@@ -19,7 +20,6 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
-import java.lang.RuntimeException
 
 class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
@@ -68,7 +68,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     fun doesDisplayDefaultCurrencyAndUserSpecifiedAmount() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-        val output = viewModel.outputs.fetchSpecifiedCurrencyAmount().last()
+        val output = viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().last()
         assertEquals(expectedSpecifiedCurrencyOutput, output)
     }
 
@@ -83,7 +83,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.fetchPriceHistory()
 
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiStateFlow().test {
             awaitItem() // Ignore first emission on our idle state
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
@@ -91,19 +91,19 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
+    fun isListSuccessfulStatePropagated() = runBlocking (testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
 
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
-        viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
+        viewModel.inputs.setSpecifiedCurrencyAmount(defaultCurrency.toString())
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
 
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiStateFlow().test {
             awaitItem() // Ignore first emission on our idle state
-            val emittedValue = awaitItem()
-            assertTrue(emittedValue is CurrencyHistoryPageState.Loading)
+            val emittedItem = awaitItem()
+            assertTrue(emittedItem is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -118,7 +118,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
 
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiStateFlow().test {
             awaitItem() // Ignore first emission on our idle state
             val emittedItem = awaitItem()
             assertTrue(emittedItem is CurrencyHistoryPageState.Loading)

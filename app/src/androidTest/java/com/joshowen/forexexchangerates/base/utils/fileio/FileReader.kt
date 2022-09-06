@@ -3,7 +3,6 @@ package com.joshowen.forexexchangerates.base.utils.fileio
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.IOException
 import java.io.InputStreamReader
-import java.lang.StringBuilder
 
 object FileReader {
     fun readStringFromFile(fileName: String): String {

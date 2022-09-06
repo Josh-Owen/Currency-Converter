@@ -1,14 +1,14 @@
 package com.joshowen.forexexchangerates.ui.currencylist
 
 import android.app.Application
-import androidx.lifecycle.*
-import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
+import androidx.lifecycle.viewModelScope
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
 import com.joshowen.forexexchangerates.data.Currency
+import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -25,9 +25,10 @@ interface CurrentListFragmentVMInputs {
 //region CurrentListFragmentVMOutputs
 interface CurrentListFragmentVMOutputs {
     fun fetchUiState() : Flow<CurrencyListPageState>
-    fun fetchDefaultApplicationCurrency() : Flow<String>
-    fun fetchSpecifiedAmount() : Flow<Int>
+    fun fetchSpecifiedAmountOfCurrencyFlow() : Flow<Int>
     fun fetchUIStateFlow() : MutableStateFlow<CurrencyListPageState>
+    fun fetchDefaultApplicationCurrencyFlow() : Flow<String>
+    fun fetchSpecifiedAmountOfCurrency() : Int
 }
 //endregion
 
@@ -38,23 +39,19 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
     val inputs: CurrentListFragmentVMInputs = this
     val outputs: CurrentListFragmentVMOutputs = this
 
-    val amountToConvert = MutableStateFlow(DEFAULT_APPLICATION_CONVERSION_AMOUNT)
-    private val amountToConvertFlow = amountToConvert.asStateFlow()
-    private val exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
-    private val exchangeRatesFlow = exchangeRates.asStateFlow()
-    private val _uiState =
-        MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Idle)
+    private val _specifiedConversionAmount = MutableStateFlow(DEFAULT_APPLICATION_CONVERSION_AMOUNT)
+    private val _exchangeRates = MutableStateFlow<List<Currency>>(emptyList())
+    private val _uiState = MutableStateFlow<CurrencyListPageState>(CurrencyListPageState.Idle)
     private val uiState: Flow<CurrencyListPageState> = _uiState
 
     //endregion
-
 
     init {
 
         viewModelScope.launch(dispatchers.io) {
             fetchCurrencyInformation()
-            amountToConvertFlow
-                .combine(exchangeRatesFlow) { amountToConvert, selectedCurrenciesExchangeRates ->
+            _specifiedConversionAmount
+                .combine(_exchangeRates) { amountToConvert, selectedCurrenciesExchangeRates ->
                     val updatedValues = selectedCurrenciesExchangeRates.map { currentSymbol ->
                         Currency(
                             currentSymbol.currency,
@@ -71,9 +68,8 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
 
     //region Inputs
     override fun setCurrencyAmount(amount: Int) {
-        amountToConvert.value = amount
+        _specifiedConversionAmount.value = amount
     }
-
 
     override suspend fun fetchCurrencyInformation() {
 
@@ -83,7 +79,7 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
             .collectLatest {
                 try {
                     if (it.isSuccess) {
-                        exchangeRates.value = it.getOrNull() ?: listOf()
+                        _exchangeRates.value = it.getOrNull() ?: listOf()
                     } else {
                         _uiState.value = CurrencyListPageState.Error(
                             getApplication<Application>().getString(
@@ -107,18 +103,22 @@ class CurrencyListFragmentVM @Inject constructor(application: Application, priva
         return uiState.flowOn(dispatchers.io)
     }
 
-    override fun fetchDefaultApplicationCurrency(): Flow<String> {
+    override fun fetchDefaultApplicationCurrencyFlow(): Flow<String> {
         return flow {
             emit(DEFAULT_APP_CURRENCY.currencyCode)
         }.flowOn(dispatchers.io)
     }
 
-    override fun fetchSpecifiedAmount(): Flow<Int> {
-        return amountToConvertFlow
+    override fun fetchSpecifiedAmountOfCurrencyFlow(): Flow<Int> {
+        return _specifiedConversionAmount
     }
 
     override fun fetchUIStateFlow(): MutableStateFlow<CurrencyListPageState> {
         return _uiState
+    }
+
+    override fun fetchSpecifiedAmountOfCurrency(): Int {
+        return _specifiedConversionAmount.value
     }
 
     //endregion

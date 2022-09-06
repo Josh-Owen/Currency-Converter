@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
-import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.forexexchangerates.extensions.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -114,7 +114,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.outputs.fetchSpecifiedAmount().collectLatest {
+                viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow().collectLatest {
                     if (it != 0) {
                         binding.etAmount.setText(it.toString())
                         binding.etAmount.setSelection(binding.etAmount.text.length)
@@ -125,7 +125,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.outputs.fetchDefaultApplicationCurrency().collectLatest {
+                viewModel.outputs.fetchDefaultApplicationCurrencyFlow().collectLatest {
                     binding.tvDefaultCurrencyTitle.text = it
                 }
 
@@ -159,7 +159,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
     private fun navigateToCurrencyHistoryPage(selectedCurrencyType: Array<CurrencyType>) {
         val action =
             CurrencyListFragmentDirections.actionCurrencyListFragmentToCurrencyHistoryFragment(
-                viewModel.amountToConvert.value.toString(),
+                viewModel.outputs.fetchSpecifiedAmountOfCurrency().toString(),
                 selectedCurrencyType
             )
         findNavController().navigate(action)

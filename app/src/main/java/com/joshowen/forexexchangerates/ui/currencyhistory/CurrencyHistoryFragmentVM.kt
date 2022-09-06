@@ -2,11 +2,11 @@ package com.joshowen.forexexchangerates.ui.currencyhistory
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseViewModel
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -24,9 +24,9 @@ interface CurrencyHistoryFragmentVMInputs {
 }
 
 interface CurrencyHistoryFragmentVMOutputs {
-    fun fetchUiState() : Flow<CurrencyHistoryPageState>
-    fun fetchSpecifiedCurrencyAmount() : Flow<String>
-    fun fetchUIStateFlow() : MutableStateFlow<CurrencyHistoryPageState>
+    fun fetchUiStateFlow() : Flow<CurrencyHistoryPageState>
+    fun fetchSpecifiedCurrencyAmountFlow() : Flow<String>
+    fun fetchUIState() : MutableStateFlow<CurrencyHistoryPageState>
 }
 //endregion
 
@@ -52,6 +52,7 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
 
     //endregion
 
+
     //region CurrencyHistoryFragmentVMInputs
     override fun setSupportedCurrencies(currencies: List<CurrencyType>) {
         _userSelectedCurrencies.value = currencies
@@ -72,8 +73,9 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
             foreignExchangeRepo.getPriceHistory(
                 DEFAULT_APP_CURRENCY, selectedCurrencies,
                 _historyStartDateRange.value, _historyEndDateRange.value
-            ).flowOn(dispatchers.io)
-                .collect {
+            )
+                .flowOn(dispatchers.io)
+                .collectLatest {
                     try {
                         if (it.isSuccess) {
                             _uiState.value =
@@ -107,17 +109,17 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     //endregion
 
     //region CurrencyHistoryFragmentVMOutputs
-    override fun fetchUiState(): Flow<CurrencyHistoryPageState> {
+    override fun fetchUiStateFlow(): Flow<CurrencyHistoryPageState> {
         return uiState.flowOn(dispatchers.io)
     }
 
-    override fun fetchSpecifiedCurrencyAmount(): Flow<String> {
+    override fun fetchSpecifiedCurrencyAmountFlow(): Flow<String> {
         return flow {
             emit("${appConfigDefaultCurrency.first()} ${_userSpecifiedAmountOfCurrency.value}")
         }.flowOn(dispatchers.io)
     }
 
-    override fun fetchUIStateFlow(): MutableStateFlow<CurrencyHistoryPageState> {
+    override fun fetchUIState(): MutableStateFlow<CurrencyHistoryPageState> {
         return _uiState
     }
 

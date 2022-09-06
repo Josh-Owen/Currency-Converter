@@ -1,6 +1,5 @@
 package com.joshowen.forexexchangerates.dispatchers
 
-import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

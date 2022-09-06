@@ -44,19 +44,22 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
     override fun observeViewModel() {
 
         lifecycleScope.launch {
+
             viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
             viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
             viewModel.inputs.setStartDate(LocalDate.now().minusDays(5))
             viewModel.inputs.setEndDateRange(LocalDate.now())
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.outputs.fetchSpecifiedCurrencyAmount().collectLatest{
+                viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().collectLatest{
                     binding.tvCurrencyAndAmount.text = it
                 }
 
-                viewModel.fetchPriceHistory()
+                viewModel.inputs.fetchPriceHistory()
 
-                viewModel.fetchUiState().collectLatest {
+
+                viewModel.outputs.fetchUiStateFlow().collectLatest {
 
                     binding.pbLoadingPriceHistory.visibility =
                         if (it is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE

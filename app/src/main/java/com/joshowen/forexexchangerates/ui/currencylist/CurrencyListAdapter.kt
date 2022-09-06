@@ -13,10 +13,10 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.joshowen.forexexchangerates.databinding.CurrencyListItemBinding
-import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.databinding.CurrencyListItemBinding
+import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
 
 //region CurrencyListAdapter
 class CurrencyListAdapter(

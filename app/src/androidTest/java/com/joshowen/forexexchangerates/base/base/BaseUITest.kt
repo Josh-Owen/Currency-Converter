@@ -4,12 +4,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.joshowen.forexexchangerates.base.dispatchers.SuccessDispatcher
 import com.joshowen.forexexchangerates.ui.MainActivity
-import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
-import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 
 
