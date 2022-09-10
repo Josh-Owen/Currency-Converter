@@ -6,11 +6,12 @@ import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiException
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListPageState
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -38,7 +39,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         Currency(CurrencyType.NEW_ZEALAND_DOLLARS, 9.0)
     )
 
-    private var transformedCurrencyValues : List<Currency> = listOf(
+    private var transformedCurrencyValues: List<Currency> = listOf(
         Currency(CurrencyType.EUROS, 0.0),
         Currency(CurrencyType.US_DOLLARS, 100.0),
         Currency(CurrencyType.JAPANESE_YEN, 200.0),
@@ -51,7 +52,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         Currency(CurrencyType.NEW_ZEALAND_DOLLARS, 900.0)
     )
 
-    private var updatedCurrencyValues : List<Currency> = listOf(
+    private var updatedCurrencyValues: List<Currency> = listOf(
         Currency(CurrencyType.EUROS, 0.0),
         Currency(CurrencyType.US_DOLLARS, 1000.0),
         Currency(CurrencyType.JAPANESE_YEN, 2000.0),
@@ -63,8 +64,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         Currency(CurrencyType.SWEDISH_KRONA, 8000.0),
         Currency(CurrencyType.NEW_ZEALAND_DOLLARS, 9000.0)
     )
-
-    private var expectedResult = Result.success(originalCurrencyValues)
 
     private var application: Application = mock()
 
@@ -89,6 +88,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     private val updatedCurrencyValue = 1000
 
     //endregion
+
 
     //region Tests
 
@@ -138,7 +138,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun isListErrorStatePropagated() = runBlocking (testDispatchers.io) {
+    fun isListErrorStatePropagated() = runBlocking(testDispatchers.io) {
         val viewModel = mockErrorCase()
 
         viewModel.fetchCurrencyInformation()
@@ -150,7 +150,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun doesUpdatingSpecifiedCurrencyUpdateCurrencyPrices() = runBlocking (testDispatchers.io) {
+    fun doesUpdatingSpecifiedCurrencyUpdateCurrencyPrices() = runBlocking(testDispatchers.io) {
         val viewModel = mockSuccessfulCase()
 
         viewModel.inputs.setCurrencyAmount(updatedCurrencyValue)
@@ -173,7 +173,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         whenever(
             repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)
         ).thenReturn(flow {
-            emit(Result.failure(genericRuntimeException))
+            emit(ApiException(genericRuntimeException))
         })
         return viewModel
     }
@@ -189,7 +189,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
             )
         ).thenReturn(
             flow {
-                emit(expectedResult)
+                emit(ApiSuccess(originalCurrencyValues))
             })
         return viewModel
     }

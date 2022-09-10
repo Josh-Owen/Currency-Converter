@@ -9,7 +9,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseFragment
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyHistoryBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +43,7 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
     override fun observeViewModel() {
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
             viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
@@ -60,19 +59,22 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                 viewModel.inputs.fetchPriceHistory()
 
 
-                viewModel.outputs.fetchUiStateFlow().collectLatest {
+                viewModel.outputs.fetchUiStateFlow().collectLatest { state ->
 
                     binding.pbLoadingPriceHistory.visibility =
-                        if (it is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
+                        if (state is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
 
-                    when (it) {
+                    binding.btnRetryLoadPriceHistory.visibility =
+                        if (state is CurrencyHistoryPageState.Error) View.VISIBLE else View.GONE
+
+                    when (state) {
                         is CurrencyHistoryPageState.Success -> {
-                            currencyHistoryAdapter.submitList(it.data)
+                            currencyHistoryAdapter.submitList(state.data)
                         }
                         is CurrencyHistoryPageState.Error -> {
                             Snackbar.make(
                                 binding.root,
-                                getString(R.string.generic_network_error),
+                                state.message,
                                 Snackbar.LENGTH_LONG
                             ).show()
                         }

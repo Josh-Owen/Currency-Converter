@@ -102,8 +102,22 @@ class CurrencyListFragmentTest : BaseUITest() {
             )
         }
 
-//        onView(withText(R.string.generic_network_error))
-//            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withText(R.string.generic_network_error))
+            .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
+    @Test
+    fun displaysRetryButtonOnError() {
+        mockWebServer.dispatcher = ErrorDispatcher()
+        mActivityRule.scenario.onActivity {
+            IdlingRegistry.getInstance().register(
+                ViewVisibilityIdlingResource(
+                    it.findViewById<ProgressBar>(R.id.pbLoadCurrency),
+                    View.GONE
+                )
+            )
+        }
+        assertDisplayed(R.id.btnRetry)
     }
 
     @Test

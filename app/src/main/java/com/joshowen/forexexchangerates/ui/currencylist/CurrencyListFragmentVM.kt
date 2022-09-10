@@ -10,6 +10,9 @@ import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.retrofit.apis.FX_API_ERROR_CODE_API_LIMIT_EXCEEDED
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiError
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -65,6 +68,7 @@ class CurrencyListFragmentVM @Inject constructor(
                     updatedValues
                 }
                 .flowOn(dispatchers.io)
+                .filter { it.isNotEmpty() }
                 .onEach { _uiState.value = CurrencyListPageState.Success(it) }
                 .collect()
         }
@@ -82,8 +86,22 @@ class CurrencyListFragmentVM @Inject constructor(
             .flowOn(dispatchers.io)
             .collectLatest {
                 try {
-                    if (it.isSuccess) {
-                        _exchangeRates.value = it.getOrNull() ?: listOf()
+                    if (it is ApiSuccess) {
+                        _exchangeRates.value = it.data
+                    } else if (it is ApiError) {
+                        if (it.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED) {
+                            _uiState.value = CurrencyListPageState.Error(
+                                getApplication<Application>().getString(
+                                    R.string.network_error_api_call_limit
+                                )
+                            )
+                        } else {
+                            _uiState.value = CurrencyListPageState.Error(
+                                getApplication<Application>().getString(
+                                    R.string.generic_network_error
+                                )
+                            )
+                        }
                     } else {
                         _uiState.value = CurrencyListPageState.Error(
                             getApplication<Application>().getString(
@@ -91,6 +109,7 @@ class CurrencyListFragmentVM @Inject constructor(
                             )
                         )
                     }
+
                 } catch (exception: Exception) {
                     _uiState.value =
                         CurrencyListPageState.Error(

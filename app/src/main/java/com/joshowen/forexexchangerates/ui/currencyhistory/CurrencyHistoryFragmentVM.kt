@@ -8,6 +8,9 @@ import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.dispatchers.DispatchersProvider
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepository
+import com.joshowen.forexexchangerates.retrofit.apis.FX_API_ERROR_CODE_API_LIMIT_EXCEEDED
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiError
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -82,16 +85,28 @@ class CurrencyHistoryFragmentVM @Inject constructor(
                 .flowOn(dispatchers.io)
                 .collectLatest {
                     try {
-                        if (it.isSuccess) {
-                            _uiState.value =
-                                CurrencyHistoryPageState.Success(it.getOrNull() ?: listOf())
-                        } else {
-                            _uiState.value =
-                                CurrencyHistoryPageState.Error(
+                        if (it is ApiSuccess) {
+                            _uiState.value = CurrencyHistoryPageState.Success(it.data)
+                        } else if (it is ApiError) {
+                            if (it.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED) {
+                                _uiState.value = CurrencyHistoryPageState.Error(
+                                    getApplication<Application>().getString(
+                                        R.string.network_error_api_call_limit
+                                    )
+                                )
+                            } else {
+                                _uiState.value = CurrencyHistoryPageState.Error(
                                     getApplication<Application>().getString(
                                         R.string.generic_network_error
                                     )
                                 )
+                            }
+                        } else {
+                            _uiState.value = CurrencyHistoryPageState.Error(
+                                getApplication<Application>().getString(
+                                    R.string.generic_network_error
+                                )
+                            )
                         }
                     } catch (exception: Exception) {
                         _uiState.value =

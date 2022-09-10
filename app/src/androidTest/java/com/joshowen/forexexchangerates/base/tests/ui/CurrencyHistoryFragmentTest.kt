@@ -15,6 +15,7 @@ import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUNT
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.base.BaseUITest
+import com.joshowen.forexexchangerates.base.dispatchers.LoadHistoricPricesFailedDispatcher
 import com.joshowen.forexexchangerates.base.idleresources.ViewVisibilityIdlingResource
 import com.joshowen.forexexchangerates.base.utils.views.nthChildOf
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -48,6 +49,14 @@ class CurrencyHistoryFragmentTest : BaseUITest() {
     @Test
     fun doesDisplayUserSpecifiedCurrencyAmount() {
         navigateToCurrencyDetails()
+        mActivityRule.scenario.onActivity {
+            IdlingRegistry.getInstance().register(
+                ViewVisibilityIdlingResource(
+                    it.findViewById<ProgressBar>(R.id.pbLoadingPriceHistory),
+                    View.GONE
+                )
+            )
+        }
         assertDisplayed("${DEFAULT_APP_CURRENCY.currencyCode} $DEFAULT_APPLICATION_CONVERSION_AMOUNT")
     }
 
@@ -70,6 +79,21 @@ class CurrencyHistoryFragmentTest : BaseUITest() {
         navigateToCurrencyDetails()
         Espresso.pressBack()
         assertDisplayed(R.string.list_of_currencies_page_title)
+    }
+
+    @Test
+    fun displaysRetryButtonOnError() {
+        mockWebServer.dispatcher = LoadHistoricPricesFailedDispatcher()
+        navigateToCurrencyDetails()
+        mActivityRule.scenario.onActivity {
+            IdlingRegistry.getInstance().register(
+                ViewVisibilityIdlingResource(
+                    it.findViewById<ProgressBar>(R.id.pbLoadingPriceHistory),
+                    View.GONE
+                )
+            )
+        }
+        assertDisplayed(R.id.btnRetryLoadPriceHistory)
     }
 
     @Test

@@ -18,9 +18,7 @@ import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.forexexchangerates.extensions.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -58,6 +56,12 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
 
         binding.etAmount.addTextChangedListener {
             viewModel.inputs.setCurrencyAmount(it.toString().toIntOrNull() ?: 0)
+        }
+
+        binding.btnRetry.setOnClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.inputs.fetchCurrencyInformation()
+            }
         }
 
         tracker = SelectionTracker.Builder(
@@ -113,10 +117,10 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         currencyAdapter.tracker = tracker
     }
 
-    @OptIn(FlowPreview::class)
     override fun observeViewModel() {
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow()
                     .filter { it != 0 }
@@ -127,24 +131,32 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+
+
                 viewModel.outputs.fetchDefaultApplicationCurrencyFlow().collectLatest {
                     binding.tvDefaultCurrencyTitle.text = it
                 }
 
-                viewModel.outputs.fetchUiState().collectLatest {
-                    binding.pbLoadCurrency.visibility =
-                        if (it is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
-                    if (it is CurrencyListPageState.Success) {
-                        currencyAdapter.submitList(it.data)
-                    } else if (it is CurrencyListPageState.Error) {
+                viewModel.outputs.fetchUiState().collectLatest { state ->
+
+                    if (state is CurrencyListPageState.Success) {
+                        currencyAdapter.submitList(state.data)
+                    } else if (state is CurrencyListPageState.Error) {
                         Snackbar.make(
                             binding.root,
-                            getString(R.string.generic_network_error),
+                            state.message,
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
+
+                    binding.btnRetry.visibility =
+                        if (state is CurrencyListPageState.Error) View.VISIBLE else View.GONE
+
+                    binding.pbLoadCurrency.visibility =
+                        if (state is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
                 }
             }
         }

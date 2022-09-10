@@ -7,6 +7,8 @@ import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyHistory
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiException
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryPageState
 import junit.framework.TestCase.assertEquals
@@ -55,15 +57,13 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     var application: Application = mock()
 
-    private var expectedResponse = Result.success(mockedListOfCurrencyHistory)
-
     private val userSpecifiedAmountOfCurrency = "100"
 
     private val expectedSpecifiedCurrencyOutput =
         "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
 
 
-    private lateinit var viewModel : CurrencyHistoryFragmentVM
+    private lateinit var viewModel: CurrencyHistoryFragmentVM
 
     @Before
     fun setup() {
@@ -138,7 +138,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
             )
         ).thenReturn(
             flow {
-                emit(Result.failure(genericRuntimeException))
+                emit(ApiException(genericRuntimeException))
             })
     }
 
@@ -152,7 +152,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
             )
         ).thenReturn(
             flow {
-                emit(expectedResponse)
+                emit(ApiSuccess(mockedListOfCurrencyHistory))
             })
     }
     //endregion

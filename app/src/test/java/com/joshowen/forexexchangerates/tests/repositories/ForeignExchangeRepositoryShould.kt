@@ -5,14 +5,18 @@ import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.mappers.ExchangeRateHistoricMapper
 import com.joshowen.forexexchangerates.mappers.ExchangeRateMapper
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.retrofit.apis.FX_API_ERROR_CODE_API_LIMIT_EXCEEDED
 import com.joshowen.forexexchangerates.retrofit.apis.ForeignExchangeAPI
 import com.joshowen.forexexchangerates.retrofit.fxexchange.responses.currentprices.ExchangeRateItemRawResponse
 import com.joshowen.forexexchangerates.retrofit.fxexchange.responses.currentprices.ExchangeRateResponse
 import com.joshowen.forexexchangerates.retrofit.fxexchange.responses.historicprices.FetchHistoricTimeSeriesResult
-import junit.framework.TestCase.assertEquals
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiError
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiException
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -20,6 +24,8 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.threeten.bp.LocalDate
+import retrofit2.Response
 
 class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
@@ -31,9 +37,9 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
     private val genericRuntimeException = RuntimeException("Something went wrong.")
 
-    private val startDate = org.threeten.bp.LocalDate.now().minusDays(5)
+    private val startDate = LocalDate.now().minusDays(5)
 
-    private val endDate = org.threeten.bp.LocalDate.now().minusDays(5)
+    private val endDate = LocalDate.now()
 
     private val supportedCurrencies = listOf(
         CurrencyType.EUROS.currencyCode,
@@ -50,11 +56,17 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
     private val defaultCurrency = CurrencyType.EUROS.currencyCode
 
-    private val expectedFetchHistoricTimeSeriesResponse: FetchHistoricTimeSeriesResult = mock()
+    private val expectedHistoricRawResponse: FetchHistoricTimeSeriesResult = mock()
+
+    private val expectedFetchHistoricTimeSeriesResponse: Response<FetchHistoricTimeSeriesResult> =
+        Response.success(expectedHistoricRawResponse)
 
     private val expectedFetchResultsRawResponse: ExchangeRateItemRawResponse = mock()
 
-    private val expectedFetchLatestConversionsResponse: ExchangeRateResponse = mock()
+    private val expectedCurrentPriceRawResponse: ExchangeRateResponse = mock()
+
+    private val expectedFetchLatestConversionsResponse: Response<ExchangeRateResponse> =
+        Response.success(expectedCurrentPriceRawResponse)
 
     private val specifiedDate = "2022-08-13"
 
@@ -89,12 +101,34 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun doesFetchLatestPricesPropagateNetworkErrors() = runTest {
         fetchCurrencyInformationGenericException()
-        assertEquals(
-            genericRuntimeException.message,
+
+        val response =
             repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
-                .exceptionOrNull()?.message
-        )
+        assertTrue((response is ApiException) && genericRuntimeException.message == response.e.message)
+
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun doesPriceHistoryPropagateApiLimitExceededError() = runTest {
+        fetchCurrencyHistoryApiLimitExceeded()
+        val response =
+            repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
+                .first()
+        assertTrue(response is ApiError && response.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED)
+    }
+
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun doesFetchLatestPricesPropagateApiLimitExceededError() = runTest {
+        fetchCurrencyPricesApiLimitExceeded()
+        val response =
+            repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies)
+                .first()
+        assertTrue(response is ApiError && response.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED)
+    }
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
@@ -112,14 +146,12 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun doesFetchPriceHistoryPropagateNetworkErrors() = runTest {
+    fun doesFetchPriceHistoryPropagateNetworkError() = runTest {
         fetchCurrencyHistoryGenericException()
-        assertEquals(
-            genericRuntimeException.message,
+        val response =
             repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
                 .first()
-                .exceptionOrNull()?.message
-        )
+        assertTrue(response is ApiException && genericRuntimeException.message == response.e.message)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -141,12 +173,10 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
     //region Test Cases
 
-    private suspend fun fetchCurrencyInformationGenericException(): ForeignExchangeRepositoryImpl {
-        val repository = ForeignExchangeRepositoryImpl(api, exchangeMapper, historicExchangeMapper)
+    private suspend fun fetchCurrencyInformationGenericException() {
         whenever(api.fetchLatestPricesForSymbols(supportedCurrencies, defaultCurrency)).thenThrow(
             genericRuntimeException
         )
-        return repository
     }
 
     private suspend fun fetchCurrencyInformationSuccess() {
@@ -156,6 +186,35 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
         whenever(exchangeMapper.invoke(expectedFetchResultsRawResponse)).thenReturn(
             mappedExchangeItems
+        )
+    }
+
+    private suspend fun fetchCurrencyHistoryApiLimitExceeded() {
+
+        whenever(
+            api.fetchHistoricPricesForSymbol(
+                startDate,
+                endDate,
+                supportedCurrencies,
+                defaultCurrency,
+            )
+        ).thenReturn(Response.error(429, "".toResponseBody()))
+
+        whenever(historicExchangeMapper.invoke(dateAndExchangeRatePair)).thenReturn(
+            mappedHistoricItems
+        )
+
+    }
+
+    private suspend fun fetchCurrencyPricesApiLimitExceeded() {
+        whenever(
+            api.fetchLatestPricesForSymbols(
+                supportedCurrencies, defaultCurrency
+            )
+        ).thenReturn(Response.error(429, "".toResponseBody()))
+
+        whenever(historicExchangeMapper.invoke(dateAndExchangeRatePair)).thenReturn(
+            mappedHistoricItems
         )
     }
 
