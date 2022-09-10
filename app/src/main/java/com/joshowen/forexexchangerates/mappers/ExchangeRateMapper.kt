@@ -5,7 +5,8 @@ import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.retrofit.fxexchange.responses.currentprices.ExchangeRateItemRawResponse
 import javax.inject.Inject
 
-internal class ExchangeRateMapper @Inject constructor(): Function1<ExchangeRateItemRawResponse, List<Currency>> {
+class ExchangeRateMapper @Inject constructor() :
+    Function1<ExchangeRateItemRawResponse, List<Currency>> {
     override fun invoke(rawExchangeRates: ExchangeRateItemRawResponse): List<Currency> {
         return listOf(
             Currency(CurrencyType.US_DOLLARS, rawExchangeRates.USD),

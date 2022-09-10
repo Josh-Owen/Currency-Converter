@@ -9,14 +9,16 @@ import javax.inject.Singleton
 class TestDispatchers : DispatchersProvider {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-     val testDispatcher = UnconfinedTestDispatcher()
+    val testDispatcher = UnconfinedTestDispatcher()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val main: CoroutineDispatcher
         get() = testDispatcher
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val io: CoroutineDispatcher
         get() = testDispatcher
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override val default: CoroutineDispatcher
         get() = testDispatcher

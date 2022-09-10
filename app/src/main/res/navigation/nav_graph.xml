@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/currencyListFragment"
         android:name="com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragment"
-        android:label="@string/list_of_currencies_page_title" >
+        android:label="@string/list_of_currencies_page_title">
         <action
             android:id="@+id/action_currencyListFragment_to_currencyHistoryFragment"
             app:destination="@id/currencyHistoryFragment" />
@@ -15,13 +15,13 @@
     <fragment
         android:id="@+id/currencyHistoryFragment"
         android:name="com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragment"
-        android:label="@string/currency_history_page_title" >
+        android:label="@string/currency_history_page_title">
 
 
         <argument
             android:name="specifiedAmountOfCurrency"
             app:argType="string"
-            app:nullable="false"/>
+            app:nullable="false" />
         <argument
             android:name="selectedCurrencies"
             app:argType="com.joshowen.forexexchangerates.data.CurrencyType[]" />

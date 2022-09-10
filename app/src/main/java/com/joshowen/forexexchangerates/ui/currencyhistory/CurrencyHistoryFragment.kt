@@ -34,7 +34,8 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
     override fun initViews() {
         super.initViews()
-        currencyHistoryAdapter = CurrencyHistoryAdapter(navArgs.specifiedAmountOfCurrency.toDouble())
+        currencyHistoryAdapter =
+            CurrencyHistoryAdapter(navArgs.specifiedAmountOfCurrency.toDouble())
         binding.rvHistoricPrices.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = currencyHistoryAdapter
@@ -52,7 +53,7 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().collectLatest{
+                viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().collectLatest {
                     binding.tvCurrencyAndAmount.text = it
                 }
 

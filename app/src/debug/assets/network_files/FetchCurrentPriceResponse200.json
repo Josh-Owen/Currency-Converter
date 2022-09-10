@@ -1,18 +1,18 @@
 {
-    "success": true,
-    "timestamp": 1660436283,
-    "base": "EUR",
-    "date": "2022-08-14",
-    "rates": {
-        "EUR": 1,
-        "USD": 1,
-        "JPY": 136.0,
-        "GBP": 0.85,
-        "AUD": 1.45,
-        "CAD": 1.31,
-        "CHF": 0.96,
-        "CNY": 6.9,
-        "SEK": 10.5,
-        "NZD": 1.59
-    }
+  "success": true,
+  "timestamp": 1660436283,
+  "base": "EUR",
+  "date": "2022-08-14",
+  "rates": {
+    "EUR": 1,
+    "USD": 1,
+    "JPY": 136.0,
+    "GBP": 0.85,
+    "AUD": 1.45,
+    "CAD": 1.31,
+    "CHF": 0.96,
+    "CNY": 6.9,
+    "SEK": 10.5,
+    "NZD": 1.59
+  }
 }

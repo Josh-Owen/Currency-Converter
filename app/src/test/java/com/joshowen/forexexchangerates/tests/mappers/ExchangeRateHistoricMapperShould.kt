@@ -28,7 +28,7 @@ class ExchangeRateHistoricMapperShould : BaseUnitTest() {
         NZD = 10.0
     )
 
-    private val expectedCurrencyHistory : List<Currency> = listOf(
+    private val expectedCurrencyHistory: List<Currency> = listOf(
         Currency(CurrencyType.US_DOLLARS, 1.0),
         Currency(CurrencyType.EUROS, 2.0),
         Currency(CurrencyType.JAPANESE_YEN, 3.0),
@@ -41,11 +41,13 @@ class ExchangeRateHistoricMapperShould : BaseUnitTest() {
         Currency(CurrencyType.NEW_ZEALAND_DOLLARS, 10.0),
     )
 
-    private val historicDateAndExchangeRatePair = Pair(expectedHistoricDateString, preProcessedExchangeRates)
+    private val historicDateAndExchangeRatePair =
+        Pair(expectedHistoricDateString, preProcessedExchangeRates)
 
     private val mappedResponse = mapper.invoke(historicDateAndExchangeRatePair)
 
-    private val expectedResponse = CurrencyHistory(expectedHistoricDateString, expectedCurrencyHistory)
+    private val expectedResponse =
+        CurrencyHistory(expectedHistoricDateString, expectedCurrencyHistory)
 
     @Test
     fun hasExpectedDatePreMapping() {
@@ -55,52 +57,72 @@ class ExchangeRateHistoricMapperShould : BaseUnitTest() {
 
     @Test
     fun maintainsExpectedUSDValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.US_DOLLARS })
     }
 
     @Test
     fun maintainsExpectedEurosValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.EUROS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.EUROS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.EUROS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.EUROS })
     }
 
     @Test
     fun maintainsExpectedJapaneseYenValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.JAPANESE_YEN })
     }
 
     @Test
     fun maintainsExpectedGreatBritishPoundsValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.GREAT_BRITISH_POUNDS })
     }
 
     @Test
     fun maintainsExpectedAustralianDollarsValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.AUSTRALIAN_DOLLARS })
     }
 
     @Test
     fun maintainsExpectedCanadianDollarsValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CANADIAN_DOLLARS })
     }
 
     @Test
     fun maintainsExpectedSwissFrancValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWISS_FRANC })
     }
 
     @Test
     fun maintainsExpectedChineseYuanValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.CHINESE_YUAN })
     }
 
     @Test
     fun maintainsExpectedSwedishKronaValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.SWEDISH_KRONA })
     }
 
     @Test
     fun maintainsExpectedNewZealandDollarsValuePreMapping() {
-        assertEquals(expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS }, mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS })
+        assertEquals(
+            expectedResponse.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS },
+            mappedResponse.currencyPriceHistory.find { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS })
     }
 
 }

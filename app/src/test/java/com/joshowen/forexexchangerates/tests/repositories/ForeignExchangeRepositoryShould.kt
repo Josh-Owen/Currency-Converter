@@ -13,6 +13,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.mock
@@ -64,10 +65,19 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
     private val mappedExchangeItems = exchangeMapper.invoke(expectedFetchResultsRawResponse)
 
+
+    private lateinit var repository: ForeignExchangeRepositoryImpl
+
+    @Before
+    fun setup() {
+        repository = ForeignExchangeRepositoryImpl(api, exchangeMapper, historicExchangeMapper)
+    }
+
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun isFetchLatestPricesFromAPIServiceExecuted() = runTest {
-        val repository = fetchCurrencyInformationSuccess()
+        fetchCurrencyInformationSuccess()
         repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
         verify(api, times(1)).fetchLatestPricesForSymbols(
             supportedCurrencies,
@@ -78,7 +88,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesFetchLatestPricesPropagateNetworkErrors() = runTest {
-        val repository = fetchCurrencyInformationGenericException()
+        fetchCurrencyInformationGenericException()
         assertEquals(
             genericRuntimeException.message,
             repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
@@ -89,7 +99,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun isFetchPriceHistoryFromAPIServiceExecuted() = runTest {
-        val repository = fetchCurrencyHistoryInformationSuccess()
+        fetchCurrencyHistorySuccess()
         repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         verify(api, times(1)).fetchHistoricPricesForSymbol(
@@ -103,7 +113,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesFetchPriceHistoryPropagateNetworkErrors() = runTest {
-        val repository = fetchCurrencyHistoryInformationException()
+        fetchCurrencyHistoryGenericException()
         assertEquals(
             genericRuntimeException.message,
             repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
@@ -115,7 +125,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesFetchPriceHistoryDelegateMappingToMapper() = runTest {
-        val repository = fetchCurrencyHistoryInformationSuccess()
+        fetchCurrencyHistorySuccess()
         repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         Mockito.verify(historicExchangeMapper, times(1)).invoke(dateAndExchangeRatePair)
@@ -124,7 +134,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesFetchLatestPriceDelegateMappingToMapper() = runTest {
-        val repository = fetchCurrencyInformationSuccess()
+        fetchCurrencyInformationSuccess()
         repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
         Mockito.verify(exchangeMapper, times(1)).invoke(expectedFetchResultsRawResponse)
     }
@@ -139,8 +149,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         return repository
     }
 
-    private suspend fun fetchCurrencyInformationSuccess(): ForeignExchangeRepositoryImpl {
-        val repository = ForeignExchangeRepositoryImpl(api, exchangeMapper, historicExchangeMapper)
+    private suspend fun fetchCurrencyInformationSuccess() {
 
         whenever(api.fetchLatestPricesForSymbols(supportedCurrencies, defaultCurrency))
             .thenReturn(expectedFetchLatestConversionsResponse)
@@ -148,11 +157,9 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         whenever(exchangeMapper.invoke(expectedFetchResultsRawResponse)).thenReturn(
             mappedExchangeItems
         )
-        return repository
     }
 
-    private suspend fun fetchCurrencyHistoryInformationException(): ForeignExchangeRepositoryImpl {
-        val repository = ForeignExchangeRepositoryImpl(api, exchangeMapper, historicExchangeMapper)
+    private suspend fun fetchCurrencyHistoryGenericException() {
         whenever(
             api.fetchHistoricPricesForSymbol(
                 startDate,
@@ -161,11 +168,9 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
                 defaultCurrency,
             )
         ).thenThrow(genericRuntimeException)
-        return repository
     }
 
-    private suspend fun fetchCurrencyHistoryInformationSuccess(): ForeignExchangeRepositoryImpl {
-        val repository = ForeignExchangeRepositoryImpl(api, exchangeMapper, historicExchangeMapper)
+    private suspend fun fetchCurrencyHistorySuccess() {
         whenever(
             api.fetchHistoricPricesForSymbol(
                 startDate,
@@ -178,8 +183,6 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         whenever(historicExchangeMapper.invoke(dateAndExchangeRatePair)).thenReturn(
             mappedHistoricItems
         )
-
-        return repository
     }
     //endregion
 }

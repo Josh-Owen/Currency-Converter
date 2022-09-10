@@ -17,21 +17,25 @@ import javax.inject.Inject
 //region Interfaces
 interface CurrencyHistoryFragmentVMInputs {
     fun setSupportedCurrencies(currencies: List<CurrencyType>)
-    fun setSpecifiedCurrencyAmount(amount : String)
-    fun setStartDate(startDate : LocalDate)
-    fun setEndDateRange(endDate : LocalDate)
+    fun setSpecifiedCurrencyAmount(amount: String)
+    fun setStartDate(startDate: LocalDate)
+    fun setEndDateRange(endDate: LocalDate)
     suspend fun fetchPriceHistory()
 }
 
 interface CurrencyHistoryFragmentVMOutputs {
-    fun fetchUiStateFlow() : Flow<CurrencyHistoryPageState>
-    fun fetchSpecifiedCurrencyAmountFlow() : Flow<String>
-    fun fetchUIState() : MutableStateFlow<CurrencyHistoryPageState>
+    fun fetchUiStateFlow(): Flow<CurrencyHistoryPageState>
+    fun fetchSpecifiedCurrencyAmountFlow(): Flow<String>
+    fun fetchUIState(): MutableStateFlow<CurrencyHistoryPageState>
 }
 //endregion
 
 @HiltViewModel
-class CurrencyHistoryFragmentVM @Inject constructor(application: Application, private val dispatchers: DispatchersProvider, private val foreignExchangeRepo : ForeignExchangeRepository): BaseViewModel(application),CurrencyHistoryFragmentVMInputs, CurrencyHistoryFragmentVMOutputs {
+class CurrencyHistoryFragmentVM @Inject constructor(
+    application: Application,
+    private val dispatchers: DispatchersProvider,
+    private val foreignExchangeRepo: ForeignExchangeRepository
+) : BaseViewModel(application), CurrencyHistoryFragmentVMInputs, CurrencyHistoryFragmentVMOutputs {
 
     //region Variables & Class Members
     val inputs: CurrencyHistoryFragmentVMInputs = this
@@ -43,7 +47,8 @@ class CurrencyHistoryFragmentVM @Inject constructor(application: Application, pr
     private val _historyStartDateRange = MutableStateFlow(LocalDate.now().minusDays(5))
     private val _historyEndDateRange = MutableStateFlow(LocalDate.now())
 
-    private val _uiState = MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
+    private val _uiState =
+        MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
     private val uiState: Flow<CurrencyHistoryPageState> = _uiState
 
     private val appConfigDefaultCurrency = flow {

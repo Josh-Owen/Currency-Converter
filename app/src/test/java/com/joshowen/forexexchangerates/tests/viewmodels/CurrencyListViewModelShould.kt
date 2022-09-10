@@ -189,8 +189,8 @@ class CurrencyListViewModelShould : BaseUnitTest() {
             )
         ).thenReturn(
             flow {
-            emit(expectedResult)
-        })
+                emit(expectedResult)
+            })
         return viewModel
     }
     //endregion

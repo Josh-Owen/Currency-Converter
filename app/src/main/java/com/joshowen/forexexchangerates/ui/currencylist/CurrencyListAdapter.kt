@@ -20,7 +20,7 @@ import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
 
 //region CurrencyListAdapter
 class CurrencyListAdapter(
-    private val listener : (Array<CurrencyType>) -> Unit
+    private val listener: (Array<CurrencyType>) -> Unit
 ) : ListAdapter<Currency, CurrencyListAdapter.CurrencyViewHolder>(CurrencyComparator()) {
 
     //region Variables & Class Members

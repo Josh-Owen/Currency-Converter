@@ -20,40 +20,40 @@
         android:text="@string/currency_history_table_date_title"
         android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/tvFirstCurrency"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@drawable/table_border"
-            android:layout_weight="20"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:visibility="gone" />
+    <TextView
+        android:id="@+id/tvFirstCurrency"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@drawable/table_border"
+        android:layout_weight="20"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tvSecondCurrency"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="20"
-            android:background="@drawable/table_border"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:visibility="gone" />
+    <TextView
+        android:id="@+id/tvSecondCurrency"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="20"
+        android:background="@drawable/table_border"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tvThirdCurrency"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="20"
-            android:background="@drawable/table_border"
-            android:gravity="center"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:visibility="gone" />
+    <TextView
+        android:id="@+id/tvThirdCurrency"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="20"
+        android:background="@drawable/table_border"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
 </LinearLayout>

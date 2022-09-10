@@ -3,6 +3,8 @@ package com.joshowen.forexexchangerates.repositories.fxexchange
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyHistory
 import com.joshowen.forexexchangerates.data.CurrencyType
+import com.joshowen.forexexchangerates.mappers.ExchangeRateHistoricMapper
+import com.joshowen.forexexchangerates.mappers.ExchangeRateMapper
 import com.joshowen.forexexchangerates.retrofit.apis.ForeignExchangeAPI
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -12,7 +14,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ForeignExchangeRepositoryImpl @Inject internal constructor(private val foreignExchangeAPI: ForeignExchangeAPI, private val exchangeRateMapper : com.joshowen.forexexchangerates.mappers.ExchangeRateMapper, private val exchangeHistoryMapper : com.joshowen.forexexchangerates.mappers.ExchangeRateHistoricMapper) :
+class ForeignExchangeRepositoryImpl @Inject constructor(
+    private val foreignExchangeAPI: ForeignExchangeAPI,
+    private val exchangeRateMapper: ExchangeRateMapper,
+    private val exchangeHistoryMapper: ExchangeRateHistoricMapper
+) :
     ForeignExchangeRepository {
 
     //region ForeignExchangeRepository
@@ -37,10 +43,15 @@ class ForeignExchangeRepositoryImpl @Inject internal constructor(private val for
         selectedCurrencyCodes: String,
         startDate: LocalDate,
         endDate: LocalDate
-    ) : Flow<Result<List<CurrencyHistory>>> {
+    ): Flow<Result<List<CurrencyHistory>>> {
 
         return flow {
-            val apiResponse = foreignExchangeAPI.fetchHistoricPricesForSymbol(startDate, endDate, selectedCurrencyCodes, baseCurrency.currencyCode)
+            val apiResponse = foreignExchangeAPI.fetchHistoricPricesForSymbol(
+                startDate,
+                endDate,
+                selectedCurrencyCodes,
+                baseCurrency.currencyCode
+            )
             val mappedExchangeRates = apiResponse.rates.map {
                 exchangeHistoryMapper.invoke(it.toPair())
             }

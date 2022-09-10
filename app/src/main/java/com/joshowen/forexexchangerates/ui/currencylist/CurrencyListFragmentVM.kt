@@ -17,23 +17,27 @@ import javax.inject.Inject
 
 //region CurrentListFragmentVMInputs
 interface CurrentListFragmentVMInputs {
-    fun setCurrencyAmount(amount : Int)
+    fun setCurrencyAmount(amount: Int)
     suspend fun fetchCurrencyInformation()
 }
 //endregion
 
 //region CurrentListFragmentVMOutputs
 interface CurrentListFragmentVMOutputs {
-    fun fetchUiState() : Flow<CurrencyListPageState>
-    fun fetchSpecifiedAmountOfCurrencyFlow() : Flow<Int>
-    fun fetchUIStateFlow() : MutableStateFlow<CurrencyListPageState>
-    fun fetchDefaultApplicationCurrencyFlow() : Flow<String>
-    fun fetchSpecifiedAmountOfCurrency() : Int
+    fun fetchUiState(): Flow<CurrencyListPageState>
+    fun fetchSpecifiedAmountOfCurrencyFlow(): Flow<Int>
+    fun fetchUIStateFlow(): MutableStateFlow<CurrencyListPageState>
+    fun fetchDefaultApplicationCurrencyFlow(): Flow<String>
+    fun fetchSpecifiedAmountOfCurrency(): Int
 }
 //endregion
 
 @HiltViewModel
-class CurrencyListFragmentVM @Inject constructor(application: Application, private val dispatchers: DispatchersProvider, private val foreignExchangeRepo: ForeignExchangeRepository): BaseViewModel(application),CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
+class CurrencyListFragmentVM @Inject constructor(
+    application: Application,
+    private val dispatchers: DispatchersProvider,
+    private val foreignExchangeRepo: ForeignExchangeRepository
+) : BaseViewModel(application), CurrentListFragmentVMInputs, CurrentListFragmentVMOutputs {
 
     //region Variables & Class Members
     val inputs: CurrentListFragmentVMInputs = this

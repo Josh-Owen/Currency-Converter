@@ -4,23 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 class ExchangeRateItemRawResponse(
     @SerializedName("USD")
-    val USD : Double?,
+    val USD: Double?,
     @SerializedName("EUR")
-    val EUR : Double?,
+    val EUR: Double?,
     @SerializedName("JPY")
-    val JPY : Double?,
+    val JPY: Double?,
     @SerializedName("GBP")
-    val GBP : Double?,
+    val GBP: Double?,
     @SerializedName("AUD")
     val AUD: Double?,
     @SerializedName("CAD")
-    val CAD : Double?,
+    val CAD: Double?,
     @SerializedName("CHF")
-    val CHF : Double?,
+    val CHF: Double?,
     @SerializedName("CNY")
-    val CNY : Double?,
+    val CNY: Double?,
     @SerializedName("SEK")
-    val SEK : Double?,
+    val SEK: Double?,
     @SerializedName("NZD")
     val NZD: Double?
 )

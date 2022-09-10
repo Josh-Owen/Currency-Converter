@@ -7,6 +7,15 @@ import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.LocalDate
 
 interface ForeignExchangeRepository {
-    fun getCurrencyInformation(baseCurrency : CurrencyType, supportedCurrencyCodes : String) : Flow<Result<List<Currency>>>
-    fun getPriceHistory(baseCurrency : CurrencyType, selectedCurrencyCodes : String, startDate : LocalDate, endDate : LocalDate): Flow<Result<List<CurrencyHistory>>>
+    fun getCurrencyInformation(
+        baseCurrency: CurrencyType,
+        supportedCurrencyCodes: String
+    ): Flow<Result<List<Currency>>>
+
+    fun getPriceHistory(
+        baseCurrency: CurrencyType,
+        selectedCurrencyCodes: String,
+        startDate: LocalDate,
+        endDate: LocalDate
+    ): Flow<Result<List<CurrencyHistory>>>
 }

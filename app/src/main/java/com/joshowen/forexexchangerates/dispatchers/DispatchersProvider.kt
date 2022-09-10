@@ -6,17 +6,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface DispatchersProvider {
-    val main : CoroutineDispatcher
-    val io : CoroutineDispatcher
-    val default : CoroutineDispatcher
+    val main: CoroutineDispatcher
+    val io: CoroutineDispatcher
+    val default: CoroutineDispatcher
 }
 
 @Singleton
-class DefaultDispatchers @Inject constructor(): DispatchersProvider {
+class DefaultDispatchers @Inject constructor() : DispatchersProvider {
     override val main: CoroutineDispatcher
-    get() = Dispatchers.Main
+        get() = Dispatchers.Main
     override val io: CoroutineDispatcher
-    get() = Dispatchers.IO
+        get() = Dispatchers.IO
     override val default: CoroutineDispatcher
-    get() = Dispatchers.Default
+        get() = Dispatchers.Default
 }

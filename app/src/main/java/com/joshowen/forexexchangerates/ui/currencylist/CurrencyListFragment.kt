@@ -18,7 +18,10 @@ import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.databinding.FragmentCurrencyListBinding
 import com.joshowen.forexexchangerates.extensions.getSelectedItems
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -110,16 +113,17 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         currencyAdapter.tracker = tracker
     }
 
+    @OptIn(FlowPreview::class)
     override fun observeViewModel() {
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow().collectLatest {
-                    if (it != 0) {
+                viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow()
+                    .filter { it != 0 }
+                    .collectLatest {
                         binding.etAmount.setText(it.toString())
                         binding.etAmount.setSelection(binding.etAmount.text.length)
                     }
-                }
             }
         }
 

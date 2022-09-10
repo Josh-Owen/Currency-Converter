@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshowen.forexexchangerates.retrofit.fxexchange.responses.currentprices.ExchangeRateItemRawResponse
 import java.util.*
 
-data class FetchHistoricTimeSeriesResult (
+data class FetchHistoricTimeSeriesResult(
     @SerializedName("base")
     val base: String?,
     @SerializedName("date")
@@ -16,9 +16,9 @@ data class FetchHistoricTimeSeriesResult (
     @SerializedName("timestamp")
     val timestamp: Long?,
     @SerializedName("timeseries")
-    val timeseries : Boolean?= null,
+    val timeseries: Boolean? = null,
     @SerializedName("start_date")
-    val start_dart : Date?,
+    val start_dart: Date?,
     @SerializedName("end_date")
-    val end_date : Date?,
+    val end_date: Date?,
 )

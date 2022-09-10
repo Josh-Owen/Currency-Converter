@@ -15,7 +15,8 @@ import com.joshowen.forexexchangerates.databinding.HistoricListItemHeaderBinding
 import com.joshowen.forexexchangerates.extensions.display
 import com.joshowen.forexexchangerates.extensions.roundToTwoDecimalPlaces
 
-internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
+internal class CurrencyHistoryAdapter(val specifiedAmount: Double) :
+    ListAdapter<CurrencyHistory, RecyclerView.ViewHolder>(CurrencyComparator()) {
 
     //region Companion Object
     companion object {
@@ -27,7 +28,7 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
     //region ListAdapter Overrides
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        return when(viewType) {
+        return when (viewType) {
             TYPE_HEADER_ITEM -> {
                 HeaderViewHolder(
                     HistoricListItemHeaderBinding.inflate(
@@ -50,7 +51,7 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(position) {
+        return when (position) {
             0 -> TYPE_HEADER_ITEM
             else -> TYPE_LIST_ITEM
         }
@@ -64,17 +65,17 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder) {
+        when (holder) {
             is HeaderViewHolder -> {
                 holder.bind(getItem(position))
             }
             is CurrencyHistoryViewHolder -> {
                 holder.bind(
                     getItem(
-                        if(position - 1 <= 0)
+                        if (position - 1 <= 0)
                             0
-                                    else
-                        position - 1
+                        else
+                            position - 1
 
                     )
                 )
@@ -85,10 +86,10 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
 
     //region DiffUtil.ItemCallback
     class CurrencyComparator : DiffUtil.ItemCallback<CurrencyHistory>() {
-        override fun areItemsTheSame(oldItem: CurrencyHistory, newItem : CurrencyHistory) =
+        override fun areItemsTheSame(oldItem: CurrencyHistory, newItem: CurrencyHistory) =
             oldItem.date == newItem.date
 
-        override fun areContentsTheSame(oldItem: CurrencyHistory, newItem : CurrencyHistory) =
+        override fun areContentsTheSame(oldItem: CurrencyHistory, newItem: CurrencyHistory) =
             oldItem == newItem
     }
     //endregion
@@ -144,7 +145,7 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
             }
         }
 
-        private fun initialiseAndDisplayCorrespondingHeader(titleResourceId : Int) {
+        private fun initialiseAndDisplayCorrespondingHeader(titleResourceId: Int) {
 
             if (!tvFirstCurrencyHeader.isVisible) {
                 tvFirstCurrencyHeader.setText(titleResourceId)
@@ -216,7 +217,7 @@ internal class CurrencyHistoryAdapter(val specifiedAmount : Double) : ListAdapte
             }
         }
 
-        private fun initialiseAndDisplayCorrespondingCurrency(amount : String) {
+        private fun initialiseAndDisplayCorrespondingCurrency(amount: String) {
 
             if (!tvFirstCurrency.isVisible) {
                 tvFirstCurrency.text = amount

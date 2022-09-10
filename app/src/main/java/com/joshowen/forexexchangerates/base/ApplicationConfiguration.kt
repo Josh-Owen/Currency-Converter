@@ -2,7 +2,7 @@ package com.joshowen.forexexchangerates.base
 
 import com.joshowen.forexexchangerates.data.CurrencyType
 
-val DEFAULT_APP_CURRENCY : CurrencyType = CurrencyType.EUROS
+val DEFAULT_APP_CURRENCY: CurrencyType = CurrencyType.EUROS
 
 val SUPPORTED_CURRENCIES = listOf(
     CurrencyType.EUROS.currencyCode,

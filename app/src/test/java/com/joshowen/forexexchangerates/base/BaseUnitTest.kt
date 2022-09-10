@@ -8,7 +8,7 @@ import org.junit.Rule
 
 open class BaseUnitTest {
 
-    var testDispatchers : TestDispatchers = TestDispatchers()
+    var testDispatchers: TestDispatchers = TestDispatchers()
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
