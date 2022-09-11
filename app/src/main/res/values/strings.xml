@@ -13,6 +13,7 @@
     <string name="list_of_currencies_selected_amount_format">%s/%s Selected</string>
     <string name="list_of_currencies_convert_multiple">Convert multiple Currencies</string>
     <string name="list_of_currencies_button_retry">Retry</string>
+    <string name="list_of_currencies_amount_hint">Amount</string>
     <!-- End of List Of Currencies Strings -->
 
 
