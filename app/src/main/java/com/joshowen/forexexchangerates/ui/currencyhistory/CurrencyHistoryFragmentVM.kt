@@ -83,24 +83,22 @@ class CurrencyHistoryFragmentVM @Inject constructor(
                 _historyStartDateRange.value, _historyEndDateRange.value
             )
                 .flowOn(dispatchers.io)
+                .catch {
+                    _uiState.value =
+                        CurrencyHistoryPageState.Error(
+                            it.message.toString()
+                        )
+                }
                 .collectLatest {
-                    try {
-                        if (it is ApiSuccess) {
-                            _uiState.value = CurrencyHistoryPageState.Success(it.data)
-                        } else if (it is ApiError) {
-                            if (it.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED) {
-                                _uiState.value = CurrencyHistoryPageState.Error(
-                                    getApplication<Application>().getString(
-                                        R.string.network_error_api_call_limit
-                                    )
+                    if (it is ApiSuccess) {
+                        _uiState.value = CurrencyHistoryPageState.Success(it.data)
+                    } else if (it is ApiError) {
+                        if (it.code == FX_API_ERROR_CODE_API_LIMIT_EXCEEDED) {
+                            _uiState.value = CurrencyHistoryPageState.Error(
+                                getApplication<Application>().getString(
+                                    R.string.network_error_api_call_limit
                                 )
-                            } else {
-                                _uiState.value = CurrencyHistoryPageState.Error(
-                                    getApplication<Application>().getString(
-                                        R.string.generic_network_error
-                                    )
-                                )
-                            }
+                            )
                         } else {
                             _uiState.value = CurrencyHistoryPageState.Error(
                                 getApplication<Application>().getString(
@@ -108,11 +106,12 @@ class CurrencyHistoryFragmentVM @Inject constructor(
                                 )
                             )
                         }
-                    } catch (exception: Exception) {
-                        _uiState.value =
-                            CurrencyHistoryPageState.Error(
-                                exception.message.toString()
+                    } else {
+                        _uiState.value = CurrencyHistoryPageState.Error(
+                            getApplication<Application>().getString(
+                                R.string.generic_network_error
                             )
+                        )
                     }
                 }
         }

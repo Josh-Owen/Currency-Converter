@@ -15,7 +15,7 @@ val SUPPORTED_CURRENCIES = listOf(
     CurrencyType.CHINESE_YUAN.currencyCode,
     CurrencyType.SWEDISH_KRONA.currencyCode,
     CurrencyType.NEW_ZEALAND_DOLLARS.currencyCode
-).joinToString()
+).joinToString(",")
 
 const val DEFAULT_APPLICATION_CONVERSION_AMOUNT = 100
 

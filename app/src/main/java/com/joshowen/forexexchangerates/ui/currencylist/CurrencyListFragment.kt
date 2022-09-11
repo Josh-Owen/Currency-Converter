@@ -122,41 +122,39 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow()
-                    .filter { it != 0 }
-                    .collectLatest {
-                        binding.etAmount.setText(it.toString())
-                        binding.etAmount.setSelection(binding.etAmount.text.length)
-                    }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-
-                viewModel.outputs.fetchDefaultApplicationCurrencyFlow().collectLatest {
-                    binding.tvDefaultCurrencyTitle.text = it
+                launch {
+                    viewModel.outputs.fetchSpecifiedAmountOfCurrencyFlow()
+                        .filter { it != 0 }
+                        .collectLatest {
+                            binding.etAmount.setText(it.toString())
+                            binding.etAmount.setSelection(binding.etAmount.text.length)
+                        }
                 }
 
-                viewModel.outputs.fetchUiState().collectLatest { state ->
-
-                    if (state is CurrencyListPageState.Success) {
-                        currencyAdapter.submitList(state.data)
-                    } else if (state is CurrencyListPageState.Error) {
-                        Snackbar.make(
-                            binding.root,
-                            state.message,
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                launch {
+                    viewModel.outputs.fetchDefaultApplicationCurrencyFlow().collectLatest {
+                        binding.tvDefaultCurrencyTitle.text = it
                     }
+                }
+                launch {
+                    viewModel.outputs.fetchUiState().collectLatest { state ->
 
-                    binding.btnRetry.visibility =
-                        if (state is CurrencyListPageState.Error) View.VISIBLE else View.GONE
+                        if (state is CurrencyListPageState.Success) {
+                            currencyAdapter.submitList(state.data)
+                        } else if (state is CurrencyListPageState.Error) {
+                            Snackbar.make(
+                                binding.root,
+                                state.message,
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
 
-                    binding.pbLoadCurrency.visibility =
-                        if (state is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
+                        binding.btnRetry.visibility =
+                            if (state is CurrencyListPageState.Error) View.VISIBLE else View.GONE
+
+                        binding.pbLoadCurrency.visibility =
+                            if (state is CurrencyListPageState.Loading) View.VISIBLE else View.GONE
+                    }
                 }
             }
         }

@@ -2,11 +2,14 @@ package com.joshowen.forexexchangerates.tests.viewmodels
 
 import android.app.Application
 import app.cash.turbine.test
+import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseUnitTest
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyHistory
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.retrofit.apis.FX_API_ERROR_CODE_API_LIMIT_EXCEEDED
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiError
 import com.joshowen.forexexchangerates.retrofit.wrappers.ApiException
 import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import com.joshowen.forexexchangerates.ui.currencyhistory.CurrencyHistoryFragmentVM
@@ -38,7 +41,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         CurrencyType.US_DOLLARS.currencyCode,
         CurrencyType.JAPANESE_YEN.currencyCode,
         CurrencyType.GREAT_BRITISH_POUNDS.currencyCode,
-    ).joinToString()
+    ).joinToString(",")
 
     private val startDate = LocalDate.now().minusDays(5)
     private val endDate = LocalDate.now()
@@ -65,6 +68,13 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
     private lateinit var viewModel: CurrencyHistoryFragmentVM
 
+    private val apiLimitExceededMessage = "Monthly API call limit exceeded."
+
+    private val genericNetworkMessage =
+        "Oops! Something went wrong, do you have an active network connection?"
+
+    private val apiLimitExceeded = "Monthly API call limit exceeded."
+
     @Before
     fun setup() {
         viewModel = CurrencyHistoryFragmentVM(application, testDispatchers, repository)
@@ -87,13 +97,32 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-        viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
+
+    @Test
+    fun isApiLimitExceededErrorEmitted() = runBlocking(testDispatchers.io) {
+        mockApiLimitExceededCase()
+
+        viewModel.inputs.setStartDate(startDate)
+        viewModel.inputs.setEndDateRange(endDate)
+
+        viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
+        viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
+        viewModel.inputs.fetchPriceHistory()
+
+        viewModel.outputs.fetchUiStateFlow().test {
+            awaitItem()
+            val emittedItem = awaitItem()
+            assertTrue(emittedItem is CurrencyHistoryPageState.Error && emittedItem.message == apiLimitExceededMessage)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
 
     @Test
     fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
@@ -106,7 +135,9 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
-            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
+            awaitItem()
+            val emittedItem = awaitItem()
+            assertTrue(emittedItem is CurrencyHistoryPageState.Success)
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -122,7 +153,8 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.fetchPriceHistory()
 
         viewModel.outputs.fetchUiStateFlow().test {
-            assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
+            awaitItem()
+            assertTrue(awaitItem() is CurrencyHistoryPageState.Error)
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -140,6 +172,34 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
             flow {
                 emit(ApiException(genericRuntimeException))
             })
+
+        whenever(
+            application.getString(
+                R.string.generic_network_error
+            )
+        ).thenReturn(genericNetworkMessage)
+    }
+
+    private suspend fun mockApiLimitExceededCase() {
+
+        whenever(
+            repository.getPriceHistory(
+                defaultCurrency,
+                selectedCurrenciesString,
+                startDate,
+                endDate
+            )
+        ).thenReturn(
+            flow {
+                emit(ApiError(FX_API_ERROR_CODE_API_LIMIT_EXCEEDED, apiLimitExceededMessage))
+            })
+
+        whenever(
+            application.getString(
+                R.string.network_error_api_call_limit
+            )
+        ).thenReturn(apiLimitExceeded)
+
     }
 
     private suspend fun mockSuccessfulCase() {

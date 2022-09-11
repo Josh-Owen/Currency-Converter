@@ -2,10 +2,15 @@ package com.joshowen.forexexchangerates.tests.viewmodels
 
 import android.app.Application
 import app.cash.turbine.test
+import com.joshowen.forexexchangerates.R
 import com.joshowen.forexexchangerates.base.BaseUnitTest
+import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
+import com.joshowen.forexexchangerates.base.SUPPORTED_CURRENCIES
 import com.joshowen.forexexchangerates.data.Currency
 import com.joshowen.forexexchangerates.data.CurrencyType
 import com.joshowen.forexexchangerates.repositories.fxexchange.ForeignExchangeRepositoryImpl
+import com.joshowen.forexexchangerates.retrofit.apis.FX_API_ERROR_CODE_API_LIMIT_EXCEEDED
+import com.joshowen.forexexchangerates.retrofit.wrappers.ApiError
 import com.joshowen.forexexchangerates.retrofit.wrappers.ApiException
 import com.joshowen.forexexchangerates.retrofit.wrappers.ApiSuccess
 import com.joshowen.forexexchangerates.ui.currencylist.CurrencyListFragmentVM
@@ -14,13 +19,11 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@RunWith(MockitoJUnitRunner::class)
 class CurrencyListViewModelShould : BaseUnitTest() {
 
     //region Variables & Class Members
@@ -67,19 +70,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     private var application: Application = mock()
 
-    private val supportedCurrencies = listOf(
-        CurrencyType.EUROS.currencyCode,
-        CurrencyType.US_DOLLARS.currencyCode,
-        CurrencyType.JAPANESE_YEN.currencyCode,
-        CurrencyType.GREAT_BRITISH_POUNDS.currencyCode,
-        CurrencyType.AUSTRALIAN_DOLLARS.currencyCode,
-        CurrencyType.CANADIAN_DOLLARS.currencyCode,
-        CurrencyType.SWISS_FRANC.currencyCode,
-        CurrencyType.CHINESE_YUAN.currencyCode,
-        CurrencyType.SWEDISH_KRONA.currencyCode,
-        CurrencyType.NEW_ZEALAND_DOLLARS.currencyCode
-    ).joinToString()
-
     private val genericRuntimeException = RuntimeException("Something went wrong.")
 
     private val defaultCurrency = CurrencyType.EUROS
@@ -87,14 +77,27 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     private val defaultCurrencyValue = 100
     private val updatedCurrencyValue = 1000
 
+    private val apiLimitExceeded = "Monthly API call limit exceeded."
+
+    private val genericNetworkMessage =
+        "Oops! Something went wrong, do you have an active network connection?"
+
+    private lateinit var viewModel: CurrencyListFragmentVM
+
     //endregion
+
+
+    @Before
+    fun setup() {
+        viewModel = CurrencyListFragmentVM(application, testDispatchers, repository)
+    }
 
 
     //region Tests
 
     @Test
     fun doesEmitDefaultApplicationCurrency() = runBlocking(testDispatchers.main) {
-        val viewModel = mockSuccessfulCase()
+        mockSuccessfulCase()
         viewModel.outputs.fetchDefaultApplicationCurrencyFlow().test {
             val emission = awaitItem()
             assertEquals(defaultCurrency.currencyCode, emission)
@@ -104,7 +107,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @Test
     fun doesUpdatingCurrencyFieldUpdateViewModelState() = runBlocking(testDispatchers.io) {
-        val viewModel = mockSuccessfulCase()
+        mockSuccessfulCase()
         val priorToUpdatingAmount = viewModel.outputs.fetchSpecifiedAmountOfCurrency()
         assertEquals(defaultCurrencyValue, priorToUpdatingAmount)
         viewModel.inputs.setCurrencyAmount(200)
@@ -114,23 +117,24 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     @Test
     fun isListLoadingStatePropagated() = runBlocking(testDispatchers.io) {
-        val viewModel = mockSuccessfulCase()
-        viewModel.fetchCurrencyInformation()
+        mockSuccessfulCase()
+        viewModel.inputs.fetchCurrencyInformation()
         viewModel.outputs.fetchUIStateFlow().test {
-            assertTrue(awaitItem() is CurrencyListPageState.Loading)
+            val emittedValue = awaitItem()
+            assertTrue(emittedValue is CurrencyListPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
     }
 
     @Test
     fun isListSuccessfulStatePropagated() = runBlocking(testDispatchers.io) {
-        val viewModel = mockSuccessfulCase()
+        mockSuccessfulCase()
 
         viewModel.inputs.setCurrencyAmount(defaultCurrencyValue)
         viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
-            awaitItem() // Ignore our initial state Idle state
+            awaitItem()
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == transformedCurrencyValues)
             cancelAndConsumeRemainingEvents()
@@ -138,24 +142,37 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun isListErrorStatePropagated() = runBlocking(testDispatchers.io) {
-        val viewModel = mockErrorCase()
+    fun isApiLimitExceededErrorPropagated() = runBlocking(testDispatchers.io) {
+        mockApiLimitExceededCase()
 
-        viewModel.fetchCurrencyInformation()
+        viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
-            assertTrue(awaitItem() is CurrencyListPageState.Error)
+            awaitItem()
+            val emittedValue = awaitItem()
+            assertTrue(emittedValue is CurrencyListPageState.Error && emittedValue.message == apiLimitExceeded)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun isListErrorStatePropagated() = runBlocking(testDispatchers.io) {
+        mockErrorCase()
+        viewModel.outputs.fetchUIStateFlow().test {
+            val emittedValue = awaitItem()
+            assertTrue(emittedValue is CurrencyListPageState.Error)
             cancelAndConsumeRemainingEvents()
         }
     }
 
     @Test
     fun doesUpdatingSpecifiedCurrencyUpdateCurrencyPrices() = runBlocking(testDispatchers.io) {
-        val viewModel = mockSuccessfulCase()
+        mockSuccessfulCase()
+
+        viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.inputs.setCurrencyAmount(updatedCurrencyValue)
 
-        viewModel.inputs.fetchCurrencyInformation()
 
         viewModel.outputs.fetchUIStateFlow().test {
             awaitItem()
@@ -168,30 +185,45 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     //endregion
 
     // region Test Cases
-    private suspend fun mockErrorCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(application, testDispatchers, repository)
+    private suspend fun mockErrorCase() {
         whenever(
-            repository.getCurrencyInformation(defaultCurrency, supportedCurrencies)
+            repository.getCurrencyInformation(
+                DEFAULT_APP_CURRENCY,
+                SUPPORTED_CURRENCIES
+            )
         ).thenReturn(flow {
             emit(ApiException(genericRuntimeException))
         })
-        return viewModel
+    }
+
+    private suspend fun mockApiLimitExceededCase() {
+        whenever(
+            repository.getCurrencyInformation(
+                DEFAULT_APP_CURRENCY,
+                SUPPORTED_CURRENCIES
+            )
+        ).thenReturn(flow {
+            emit(ApiError(FX_API_ERROR_CODE_API_LIMIT_EXCEEDED, apiLimitExceeded))
+        })
+
+        whenever(
+            application.getString(
+                R.string.network_error_api_call_limit
+            )
+        ).thenReturn(apiLimitExceeded)
     }
 
 
-    private suspend fun mockSuccessfulCase(): CurrencyListFragmentVM {
-        val viewModel = CurrencyListFragmentVM(application, testDispatchers, repository)
-
+    private suspend fun mockSuccessfulCase() {
         whenever(
             repository.getCurrencyInformation(
-                defaultCurrency,
-                supportedCurrencies
+                DEFAULT_APP_CURRENCY,
+                SUPPORTED_CURRENCIES
             )
         ).thenReturn(
             flow {
                 emit(ApiSuccess(originalCurrencyValues))
             })
-        return viewModel
     }
     //endregion
 }

@@ -45,40 +45,44 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
 
-            viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
-            viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
-            viewModel.inputs.setStartDate(LocalDate.now().minusDays(5))
-            viewModel.inputs.setEndDateRange(LocalDate.now())
-
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().collectLatest {
-                    binding.tvCurrencyAndAmount.text = it
+                launch {
+                    viewModel.inputs.setSupportedCurrencies(navArgs.selectedCurrencies.toList())
+                    viewModel.inputs.setSpecifiedCurrencyAmount(navArgs.specifiedAmountOfCurrency)
+                    viewModel.inputs.setStartDate(LocalDate.now().minusDays(5))
+                    viewModel.inputs.setEndDateRange(LocalDate.now())
+                    viewModel.inputs.fetchPriceHistory()
                 }
 
-                viewModel.inputs.fetchPriceHistory()
+                launch {
+                    viewModel.outputs.fetchSpecifiedCurrencyAmountFlow().collectLatest {
+                        binding.tvCurrencyAndAmount.text = it
+                    }
+                }
 
+                launch {
+                    viewModel.outputs.fetchUiStateFlow().collectLatest { state ->
 
-                viewModel.outputs.fetchUiStateFlow().collectLatest { state ->
+                        binding.pbLoadingPriceHistory.visibility =
+                            if (state is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
 
-                    binding.pbLoadingPriceHistory.visibility =
-                        if (state is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
+                        binding.btnRetryLoadPriceHistory.visibility =
+                            if (state is CurrencyHistoryPageState.Error) View.VISIBLE else View.GONE
 
-                    binding.btnRetryLoadPriceHistory.visibility =
-                        if (state is CurrencyHistoryPageState.Error) View.VISIBLE else View.GONE
-
-                    when (state) {
-                        is CurrencyHistoryPageState.Success -> {
-                            currencyHistoryAdapter.submitList(state.data)
+                        when (state) {
+                            is CurrencyHistoryPageState.Success -> {
+                                currencyHistoryAdapter.submitList(state.data)
+                            }
+                            is CurrencyHistoryPageState.Error -> {
+                                Snackbar.make(
+                                    binding.root,
+                                    state.message,
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            }
+                            else -> {}
                         }
-                        is CurrencyHistoryPageState.Error -> {
-                            Snackbar.make(
-                                binding.root,
-                                state.message,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                        else -> {}
                     }
                 }
             }

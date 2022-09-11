@@ -80,12 +80,18 @@ class CurrencyListFragmentVM @Inject constructor(
     }
 
     override suspend fun fetchCurrencyInformation() {
-
         _uiState.value = CurrencyListPageState.Loading
-        foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
-            .flowOn(dispatchers.io)
-            .collectLatest {
-                try {
+        viewModelScope.launch(dispatchers.io) {
+
+            foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
+                .flowOn(dispatchers.io)
+                .catch {
+                    _uiState.value =
+                        CurrencyListPageState.Error(
+                            it.message.toString()
+                        )
+                }
+                .collectLatest {
                     if (it is ApiSuccess) {
                         _exchangeRates.value = it.data
                     } else if (it is ApiError) {
@@ -109,14 +115,8 @@ class CurrencyListFragmentVM @Inject constructor(
                             )
                         )
                     }
-
-                } catch (exception: Exception) {
-                    _uiState.value =
-                        CurrencyListPageState.Error(
-                            exception.message.toString()
-                        )
                 }
-            }
+        }
     }
 
     //endregion

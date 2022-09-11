@@ -16,6 +16,7 @@ import com.joshowen.forexexchangerates.base.DEFAULT_APPLICATION_CONVERSION_AMOUN
 import com.joshowen.forexexchangerates.base.DEFAULT_APP_CURRENCY
 import com.joshowen.forexexchangerates.base.base.BaseUITest
 import com.joshowen.forexexchangerates.base.dispatchers.LoadHistoricPricesFailedDispatcher
+import com.joshowen.forexexchangerates.base.dispatchers.SuccessDispatcher
 import com.joshowen.forexexchangerates.base.idleresources.ViewVisibilityIdlingResource
 import com.joshowen.forexexchangerates.base.utils.views.nthChildOf
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -49,6 +50,7 @@ class CurrencyHistoryFragmentTest : BaseUITest() {
     @Test
     fun doesDisplayUserSpecifiedCurrencyAmount() {
         navigateToCurrencyDetails()
+        mockWebServer.dispatcher = SuccessDispatcher()
         mActivityRule.scenario.onActivity {
             IdlingRegistry.getInstance().register(
                 ViewVisibilityIdlingResource(
