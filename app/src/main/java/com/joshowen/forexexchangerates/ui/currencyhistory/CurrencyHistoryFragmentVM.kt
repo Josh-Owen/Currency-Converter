@@ -46,14 +46,11 @@ class CurrencyHistoryFragmentVM @Inject constructor(
 
     private val _userSelectedCurrencies = MutableStateFlow(emptyList<CurrencyType>())
     private val _userSpecifiedAmountOfCurrency = MutableStateFlow("")
-
     private val _historyStartDateRange = MutableStateFlow(LocalDate.now().minusDays(5))
     private val _historyEndDateRange = MutableStateFlow(LocalDate.now())
-
     private val _uiState =
         MutableStateFlow<CurrencyHistoryPageState>(CurrencyHistoryPageState.Loading)
     private val uiState: Flow<CurrencyHistoryPageState> = _uiState
-
     private val appConfigDefaultCurrency = flow {
         emit(DEFAULT_APP_CURRENCY.currencyCode)
     }.flowOn(dispatchers.io)
@@ -134,8 +131,8 @@ class CurrencyHistoryFragmentVM @Inject constructor(
 
     override fun fetchSpecifiedCurrencyAmountFlow(): Flow<String> {
         return flow {
-            emit("${appConfigDefaultCurrency.first()} ${_userSpecifiedAmountOfCurrency.value}")
-        }.flowOn(dispatchers.io)
+            emit("${appConfigDefaultCurrency.last()} ${_userSpecifiedAmountOfCurrency.value}")
+        }
     }
 
     override fun fetchUIState(): MutableStateFlow<CurrencyHistoryPageState> {

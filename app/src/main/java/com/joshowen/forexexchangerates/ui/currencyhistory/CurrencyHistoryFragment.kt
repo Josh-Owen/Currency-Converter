@@ -64,12 +64,6 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                 launch {
                     viewModel.outputs.fetchUiStateFlow().collectLatest { state ->
 
-                        binding.pbLoadingPriceHistory.visibility =
-                            if (state is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
-
-                        binding.btnRetryLoadPriceHistory.visibility =
-                            if (state is CurrencyHistoryPageState.Error) View.VISIBLE else View.GONE
-
                         when (state) {
                             is CurrencyHistoryPageState.Success -> {
                                 currencyHistoryAdapter.submitList(state.data)
@@ -83,6 +77,11 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                             }
                             else -> {}
                         }
+                        binding.pbLoadingPriceHistory.visibility =
+                            if (state is CurrencyHistoryPageState.Loading) View.VISIBLE else View.GONE
+
+                        binding.btnRetryLoadPriceHistory.visibility =
+                            if (state is CurrencyHistoryPageState.Error) View.VISIBLE else View.GONE
                     }
                 }
             }

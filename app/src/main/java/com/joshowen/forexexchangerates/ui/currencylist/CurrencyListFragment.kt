@@ -47,8 +47,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
     override fun initViews() {
         super.initViews()
 
-
-
         binding.rvExchangeRates.apply {
             this.adapter = currencyAdapter
             this.layoutManager = LinearLayoutManager(requireContext())
@@ -136,6 +134,7 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
                         binding.tvDefaultCurrencyTitle.text = it
                     }
                 }
+
                 launch {
                     viewModel.outputs.fetchUiState().collectLatest { state ->
 
@@ -165,7 +164,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
         tracker?.onRestoreInstanceState(arguments)
     }
 
-
     //endregion
 
     // region Navigation
@@ -191,7 +189,6 @@ class CurrencyListFragment : BaseFragment<FragmentCurrencyListBinding>(), Action
     override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean {
         return true
     }
-
 
     override fun onActionItemClicked(p0: ActionMode?, item: MenuItem): Boolean {
         return when (item.itemId) {

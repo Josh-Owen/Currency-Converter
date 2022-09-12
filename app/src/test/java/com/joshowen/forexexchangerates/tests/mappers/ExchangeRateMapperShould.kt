@@ -120,6 +120,4 @@ class ExchangeRateMapperShould : BaseUnitTest() {
             expectedResponse.first { it.currency == CurrencyType.NEW_ZEALAND_DOLLARS }.price
         )
     }
-
-
 }

@@ -90,6 +90,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun isFetchLatestPricesFromAPIServiceExecuted() = runTest {
         fetchCurrencyInformationSuccess()
+
         repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
         verify(api, times(1)).fetchLatestPricesForSymbols(
             supportedCurrencies,
@@ -105,13 +106,13 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         val response =
             repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
         assertTrue((response is ApiException) && genericRuntimeException.message == response.e.message)
-
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun doesPriceHistoryPropagateApiLimitExceededError() = runTest {
         fetchCurrencyHistoryApiLimitExceeded()
+
         val response =
             repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
                 .first()
@@ -123,6 +124,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun doesFetchLatestPricesPropagateApiLimitExceededError() = runTest {
         fetchCurrencyPricesApiLimitExceeded()
+
         val response =
             repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies)
                 .first()
@@ -134,6 +136,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun isFetchPriceHistoryFromAPIServiceExecuted() = runTest {
         fetchCurrencyHistorySuccess()
+
         repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         verify(api, times(1)).fetchHistoricPricesForSymbol(
@@ -148,6 +151,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun doesFetchPriceHistoryPropagateNetworkError() = runTest {
         fetchCurrencyHistoryGenericException()
+
         val response =
             repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
                 .first()
@@ -158,6 +162,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
     @Test
     fun doesFetchPriceHistoryDelegateMappingToMapper() = runTest {
         fetchCurrencyHistorySuccess()
+
         repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
             .first()
         Mockito.verify(historicExchangeMapper, times(1)).invoke(dateAndExchangeRatePair)

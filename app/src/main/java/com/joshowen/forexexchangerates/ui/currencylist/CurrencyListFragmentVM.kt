@@ -81,8 +81,8 @@ class CurrencyListFragmentVM @Inject constructor(
 
     override suspend fun fetchCurrencyInformation() {
         _uiState.value = CurrencyListPageState.Loading
-        viewModelScope.launch(dispatchers.io) {
 
+        viewModelScope.launch(dispatchers.io) {
             foreignExchangeRepo.getCurrencyInformation(DEFAULT_APP_CURRENCY, SUPPORTED_CURRENCIES)
                 .flowOn(dispatchers.io)
                 .catch {
@@ -143,6 +143,5 @@ class CurrencyListFragmentVM @Inject constructor(
     override fun fetchSpecifiedAmountOfCurrency(): Int {
         return _specifiedConversionAmount.value
     }
-
     //endregion
 }

@@ -17,5 +17,4 @@ open class BaseUnitTest {
     @get:Rule
     val coroutineTestRule = MainCoroutineScopeRule(testDispatchers.testDispatcher)
 
-
 }

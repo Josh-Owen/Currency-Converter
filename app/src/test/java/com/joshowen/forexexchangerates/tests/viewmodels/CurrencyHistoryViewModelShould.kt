@@ -46,8 +46,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     private val startDate = LocalDate.now().minusDays(5)
     private val endDate = LocalDate.now()
 
-    private val genericRuntimeException = RuntimeException("Something went wrong.")
-
     private var mockedListOfCurrencyHistory: List<CurrencyHistory> = listOf(
         CurrencyHistory(
             "2022-09-03", listOf(
@@ -65,7 +63,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
     private val expectedSpecifiedCurrencyOutput =
         "${defaultCurrency.currencyCode} $userSpecifiedAmountOfCurrency"
 
-
     private lateinit var viewModel: CurrencyHistoryFragmentVM
 
     private val apiLimitExceededMessage = "Monthly API call limit exceeded."
@@ -74,6 +71,8 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         "Oops! Something went wrong, do you have an active network connection?"
 
     private val apiLimitExceeded = "Monthly API call limit exceeded."
+
+    private val genericRuntimeException = RuntimeException(genericNetworkMessage)
 
     @Before
     fun setup() {
@@ -94,10 +93,8 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
-
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-
         viewModel.outputs.fetchUiStateFlow().test {
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
@@ -110,11 +107,9 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
-
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.fetchPriceHistory()
-
         viewModel.outputs.fetchUiStateFlow().test {
             awaitItem()
             val emittedItem = awaitItem()
@@ -151,7 +146,6 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
-
         viewModel.outputs.fetchUiStateFlow().test {
             awaitItem()
             assertTrue(awaitItem() is CurrencyHistoryPageState.Error)

@@ -11,10 +11,3 @@ internal fun View.display() {
 internal fun View.hide() {
     this.visibility = View.INVISIBLE
 }
-
-fun View.clicks() = callbackFlow {
-    setOnClickListener {
-        trySend(Unit)
-    }
-    awaitClose { setOnClickListener(null) }
-}

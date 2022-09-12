@@ -70,7 +70,10 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
     private var application: Application = mock()
 
-    private val genericRuntimeException = RuntimeException("Something went wrong.")
+    private val genericNetworkMessage =
+        "Oops! Something went wrong, do you have an active network connection?"
+
+    private val genericRuntimeException = RuntimeException(genericNetworkMessage)
 
     private val defaultCurrency = CurrencyType.EUROS
 
@@ -78,9 +81,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     private val updatedCurrencyValue = 1000
 
     private val apiLimitExceeded = "Monthly API call limit exceeded."
-
-    private val genericNetworkMessage =
-        "Oops! Something went wrong, do you have an active network connection?"
 
     private lateinit var viewModel: CurrencyListFragmentVM
 
@@ -98,6 +98,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun doesEmitDefaultApplicationCurrency() = runBlocking(testDispatchers.main) {
         mockSuccessfulCase()
+
         viewModel.outputs.fetchDefaultApplicationCurrencyFlow().test {
             val emission = awaitItem()
             assertEquals(defaultCurrency.currencyCode, emission)
@@ -108,6 +109,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun doesUpdatingCurrencyFieldUpdateViewModelState() = runBlocking(testDispatchers.io) {
         mockSuccessfulCase()
+
         val priorToUpdatingAmount = viewModel.outputs.fetchSpecifiedAmountOfCurrency()
         assertEquals(defaultCurrencyValue, priorToUpdatingAmount)
         viewModel.inputs.setCurrencyAmount(200)
@@ -118,6 +120,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun isListLoadingStatePropagated() = runBlocking(testDispatchers.io) {
         mockSuccessfulCase()
+
         viewModel.inputs.fetchCurrencyInformation()
         viewModel.outputs.fetchUIStateFlow().test {
             val emittedValue = awaitItem()
@@ -132,7 +135,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.setCurrencyAmount(defaultCurrencyValue)
         viewModel.inputs.fetchCurrencyInformation()
-
         viewModel.outputs.fetchUIStateFlow().test {
             awaitItem()
             val emittedValue = awaitItem()
@@ -146,7 +148,6 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         mockApiLimitExceededCase()
 
         viewModel.inputs.fetchCurrencyInformation()
-
         viewModel.outputs.fetchUIStateFlow().test {
             awaitItem()
             val emittedValue = awaitItem()
@@ -170,10 +171,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         mockSuccessfulCase()
 
         viewModel.inputs.fetchCurrencyInformation()
-
         viewModel.inputs.setCurrencyAmount(updatedCurrencyValue)
-
-
         viewModel.outputs.fetchUIStateFlow().test {
             awaitItem()
             val emittedValue = awaitItem()
