@@ -95,7 +95,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
-        viewModel.outputs.fetchUiStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             assertTrue(awaitItem() is CurrencyHistoryPageState.Loading)
             cancelAndConsumeRemainingEvents()
         }
@@ -110,7 +110,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setSupportedCurrencies(selectedCurrencies)
         viewModel.inputs.setSpecifiedCurrencyAmount(userSpecifiedAmountOfCurrency)
         viewModel.inputs.fetchPriceHistory()
-        viewModel.outputs.fetchUiStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedItem = awaitItem()
             assertTrue(emittedItem is CurrencyHistoryPageState.Error && emittedItem.message == apiLimitExceededMessage)
@@ -129,7 +129,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
 
-        viewModel.outputs.fetchUiStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedItem = awaitItem()
             assertTrue(emittedItem is CurrencyHistoryPageState.Success)
@@ -146,7 +146,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.inputs.setStartDate(startDate)
         viewModel.inputs.setEndDateRange(endDate)
         viewModel.inputs.fetchPriceHistory()
-        viewModel.outputs.fetchUiStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             assertTrue(awaitItem() is CurrencyHistoryPageState.Error)
             cancelAndConsumeRemainingEvents()

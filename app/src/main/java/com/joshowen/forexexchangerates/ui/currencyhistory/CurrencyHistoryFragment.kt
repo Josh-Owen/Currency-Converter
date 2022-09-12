@@ -62,7 +62,7 @@ class CurrencyHistoryFragment : BaseFragment<FragmentCurrencyHistoryBinding>() {
                 }
 
                 launch {
-                    viewModel.outputs.fetchUiStateFlow().collectLatest { state ->
+                    viewModel.outputs.fetchUiState().collectLatest { state ->
 
                         when (state) {
                             is CurrencyHistoryPageState.Success -> {

@@ -27,9 +27,8 @@ interface CurrencyHistoryFragmentVMInputs {
 }
 
 interface CurrencyHistoryFragmentVMOutputs {
-    fun fetchUiStateFlow(): Flow<CurrencyHistoryPageState>
+    fun fetchUiState(): Flow<CurrencyHistoryPageState>
     fun fetchSpecifiedCurrencyAmountFlow(): Flow<String>
-    fun fetchUIState(): MutableStateFlow<CurrencyHistoryPageState>
 }
 //endregion
 
@@ -125,7 +124,7 @@ class CurrencyHistoryFragmentVM @Inject constructor(
     //endregion
 
     //region CurrencyHistoryFragmentVMOutputs
-    override fun fetchUiStateFlow(): Flow<CurrencyHistoryPageState> {
+    override fun fetchUiState(): Flow<CurrencyHistoryPageState> {
         return uiState.flowOn(dispatchers.io)
     }
 
@@ -133,10 +132,6 @@ class CurrencyHistoryFragmentVM @Inject constructor(
         return flow {
             emit("${appConfigDefaultCurrency.last()} ${_userSpecifiedAmountOfCurrency.value}")
         }
-    }
-
-    override fun fetchUIState(): MutableStateFlow<CurrencyHistoryPageState> {
-        return _uiState
     }
 
     //endregion

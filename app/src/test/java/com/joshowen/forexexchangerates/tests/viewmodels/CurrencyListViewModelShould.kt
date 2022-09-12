@@ -122,7 +122,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         mockSuccessfulCase()
 
         viewModel.inputs.fetchCurrencyInformation()
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Loading)
             cancelAndConsumeRemainingEvents()
@@ -135,7 +135,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.setCurrencyAmount(defaultCurrencyValue)
         viewModel.inputs.fetchCurrencyInformation()
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == transformedCurrencyValues)
@@ -148,7 +148,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
         mockApiLimitExceededCase()
 
         viewModel.inputs.fetchCurrencyInformation()
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Error && emittedValue.message == apiLimitExceeded)
@@ -159,7 +159,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
     @Test
     fun isListErrorStatePropagated() = runBlocking(testDispatchers.io) {
         mockErrorCase()
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Error)
             cancelAndConsumeRemainingEvents()
@@ -172,7 +172,7 @@ class CurrencyListViewModelShould : BaseUnitTest() {
 
         viewModel.inputs.fetchCurrencyInformation()
         viewModel.inputs.setCurrencyAmount(updatedCurrencyValue)
-        viewModel.outputs.fetchUIStateFlow().test {
+        viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedValue = awaitItem()
             assertTrue(emittedValue is CurrencyListPageState.Success && emittedValue.data == updatedCurrencyValues)

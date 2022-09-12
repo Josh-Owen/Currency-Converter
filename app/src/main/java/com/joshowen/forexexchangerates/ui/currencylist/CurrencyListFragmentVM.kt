@@ -29,7 +29,6 @@ interface CurrentListFragmentVMInputs {
 interface CurrentListFragmentVMOutputs {
     fun fetchUiState(): Flow<CurrencyListPageState>
     fun fetchSpecifiedAmountOfCurrencyFlow(): Flow<Int>
-    fun fetchUIStateFlow(): MutableStateFlow<CurrencyListPageState>
     fun fetchDefaultApplicationCurrencyFlow(): Flow<String>
     fun fetchSpecifiedAmountOfCurrency(): Int
 }
@@ -134,10 +133,6 @@ class CurrencyListFragmentVM @Inject constructor(
 
     override fun fetchSpecifiedAmountOfCurrencyFlow(): Flow<Int> {
         return _specifiedConversionAmount
-    }
-
-    override fun fetchUIStateFlow(): MutableStateFlow<CurrencyListPageState> {
-        return _uiState
     }
 
     override fun fetchSpecifiedAmountOfCurrency(): Int {
