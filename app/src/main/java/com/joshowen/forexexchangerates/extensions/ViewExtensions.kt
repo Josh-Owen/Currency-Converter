@@ -4,10 +4,10 @@ import android.view.View
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
-internal fun View.display() {
+fun View.display() {
     this.visibility = View.VISIBLE
 }
 
-internal fun View.hide() {
+fun View.hide() {
     this.visibility = View.INVISIBLE
 }
