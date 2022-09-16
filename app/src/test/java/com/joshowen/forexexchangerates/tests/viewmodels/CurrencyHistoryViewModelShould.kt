@@ -132,7 +132,7 @@ class CurrencyHistoryViewModelShould : BaseUnitTest() {
         viewModel.outputs.fetchUiState().test {
             awaitItem()
             val emittedItem = awaitItem()
-            assertTrue(emittedItem is CurrencyHistoryPageState.Success)
+            assertTrue(emittedItem is CurrencyHistoryPageState.Success && emittedItem.data == mockedListOfCurrencyHistory)
             cancelAndConsumeRemainingEvents()
         }
     }

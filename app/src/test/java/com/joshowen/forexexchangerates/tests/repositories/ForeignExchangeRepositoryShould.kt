@@ -105,7 +105,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
 
         val response =
             repository.getCurrencyInformation(CurrencyType.EUROS, supportedCurrencies).first()
-        assertTrue((response is ApiException) && genericRuntimeException.message == response.e.message)
+        assertTrue((response is ApiException) && genericRuntimeException.message == response.exception.message)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -155,7 +155,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
         val response =
             repository.getPriceHistory(CurrencyType.EUROS, supportedCurrencies, startDate, endDate)
                 .first()
-        assertTrue(response is ApiException && genericRuntimeException.message == response.e.message)
+        assertTrue(response is ApiException && genericRuntimeException.message == response.exception.message)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -203,7 +203,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
                 supportedCurrencies,
                 defaultCurrency,
             )
-        ).thenReturn(Response.error(429, "".toResponseBody()))
+        ).thenReturn(Response.error(FX_API_ERROR_CODE_API_LIMIT_EXCEEDED, "".toResponseBody()))
 
         whenever(historicExchangeMapper.invoke(dateAndExchangeRatePair)).thenReturn(
             mappedHistoricItems
@@ -216,7 +216,7 @@ class ForeignExchangeRepositoryShould : BaseUnitTest() {
             api.fetchLatestPricesForSymbols(
                 supportedCurrencies, defaultCurrency
             )
-        ).thenReturn(Response.error(429, "".toResponseBody()))
+        ).thenReturn(Response.error(FX_API_ERROR_CODE_API_LIMIT_EXCEEDED, "".toResponseBody()))
 
         whenever(historicExchangeMapper.invoke(dateAndExchangeRatePair)).thenReturn(
             mappedHistoricItems
